@@ -11,11 +11,19 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    password: {
+    phone: {
+        type: String,
+        required: true
+    },
+    grade: {
         type: String,
         required: true,
     },
-    phone: {
+    password: {
+        type: String,
+        required: true
+    },
+    answer: {
         type: String,
         required: true
     },
