@@ -1,5 +1,5 @@
 import express from "express"
-import { forgotPasswordController, loginController, registerController, testController } from "../controller/authController.js"
+import { deleteUserController, forgotPasswordController, getAllUsersController, loginController, registerController, testController } from "../controller/authController.js"
 import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js'
 
 //router object
@@ -15,6 +15,12 @@ router.post('/login', loginController)
 
 //Forgot Password || Method: POST
 router.post('/forgot-password', forgotPasswordController)
+
+//all user list
+router.get("/all-users", requireSignIn, isAdmin, getAllUsersController)
+
+//delete user by admin
+router.delete('/delete-user/:id', requireSignIn, isAdmin, deleteUserController)
 
 //Test Routes
 router.get('/test', requireSignIn, isAdmin, testController)
