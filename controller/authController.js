@@ -213,6 +213,7 @@ export const getAllUsersController = async (req, res) => {
     }
 };
 
+
 //delete user controller
 export const deleteUserController = async (req, res) => {
     try {
