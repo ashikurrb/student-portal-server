@@ -10,7 +10,6 @@ const gradeSchema = new mongoose.Schema({
         type: String,
         lowercase: true,
     }
-
 })
 
 export default mongoose.model("Grade", gradeSchema)

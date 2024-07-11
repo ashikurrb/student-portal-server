@@ -54,12 +54,12 @@ export const updateGradeController = async (req, res) => {
 }
 
 //get all-grade controller
-export const getAllGradeController = async (req, res) => {
+export const getAllGradesController = async (req, res) => {
     try {
         const grade = await gradeModel.find({})
         res.status(200).send({
             success: true,
-            message: "Grade List fetched successfully",
+            message: "Grades List fetched successfully",
             grade,
         })
     } catch (error) {
@@ -94,18 +94,18 @@ export const getSingleGradeController = async (req, res) => {
 //delete grade
 export const deleteGradeController = async (req, res) => {
     try {
-        const { id } = req.params.id;
-        await gradeModel.findByIdAndDelete(id)
+        const { id } = req.params;
+        await gradeModel.findByIdAndDelete(id);
         res.status(200).send({
             success: true,
-            message: "Grade deleted successfully"
+            message: "Grade deleted successfully",
         })
     } catch (error) {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while deleting Grade",
-            error
+            error,
+            message: "Error while deleting Grade"
         })
     }
 }

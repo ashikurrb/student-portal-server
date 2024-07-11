@@ -1,6 +1,6 @@
 import express from 'express';
 import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js'
-import { createGradeController, deleteGradeController, getAllGradeController, getSingleGradeController, updateGradeController } from '../controller/gradeController.js';
+import { createGradeController, deleteGradeController, getAllGradesController, getSingleGradeController, updateGradeController } from '../controller/gradeController.js';
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ router.post('/create-grade', requireSignIn, isAdmin, createGradeController)
 router.put('/update-grade/:id', requireSignIn, isAdmin, updateGradeController)
 
 //get all grade
-router.get('/all-grade', getAllGradeController)
+router.get('/all-grades', getAllGradesController)
 
 //get single grade
 router.get('/single-grade/:slug', getSingleGradeController)
