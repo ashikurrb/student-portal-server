@@ -145,17 +145,6 @@ export const loginController = async (req, res) => {
     }
 }
 
-//test controller 
-export const testController = (req, res) => {
-    try {
-        res.send('Protected Route');
-    } catch (error) {
-        console.log(error);
-        res.send({ error })
-    }
-}
-
-
 //forgot password controller 
 export const forgotPasswordController = async (req, res) => {
     try {
@@ -201,6 +190,7 @@ export const getAllUsersController = async (req, res) => {
     try {
         const users = await userModel
             .find({})
+            .populate("grade")
             .sort({ createdAt: -1 });
         res.json(users);
     } catch (error) {

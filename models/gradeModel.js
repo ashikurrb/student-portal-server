@@ -9,7 +9,7 @@ const gradeSchema = new mongoose.Schema({
     slug: {
         type: String,
         lowercase: true,
-    }
-})
+    },
+}, { timestamps: true })
 
 export default mongoose.model("Grade", gradeSchema)

@@ -1,5 +1,5 @@
 import express from "express"
-import { deleteUserController, forgotPasswordController, getAllUsersController, loginController, registerController, testController } from "../controller/authController.js"
+import { deleteUserController, forgotPasswordController, getAllUsersController, loginController, registerController } from "../controller/authController.js"
 import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js'
 
 //router object
@@ -22,8 +22,6 @@ router.get("/all-users", requireSignIn, isAdmin, getAllUsersController)
 //delete user by admin
 router.delete('/delete-user/:id', requireSignIn, isAdmin, deleteUserController)
 
-//Test Routes
-router.get('/test', requireSignIn, isAdmin, testController)
 
 //protected user route
 router.get('/user-auth', requireSignIn, (req, res) => {

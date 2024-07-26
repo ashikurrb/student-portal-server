@@ -16,8 +16,9 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     grade: {
-        type: String,
-        required: true,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Grade',
+        require: true,
     },
     password: {
         type: String,
@@ -31,6 +32,7 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    
 }, { timestamps: true })
 
 export default mongoose.model('users', userSchema)
