@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoute.js"
 import gradeRoutes from "./routes/gradeRoute.js"
 import resultRoutes from "./routes/resultRoute.js"
+import paymentRoutes from "./routes/paymentRoute.js"
 import cors from 'cors'
 
 
@@ -26,6 +27,7 @@ app.use(morgan("dev"))
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/grade', gradeRoutes)
 app.use('/api/v1/result', resultRoutes)
+app.use('/api/v1/payment', paymentRoutes)
 
 //rest API
 app.get('/', (req, res) => {

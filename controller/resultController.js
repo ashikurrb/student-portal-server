@@ -87,13 +87,14 @@ export const updateResultController = async (req, res) => {
         if (!examDate) {
             return res.status(400).send({ message: "Date is Required" });
         }
-        const result = await resultModel.findByIdAndUpdate(req.params.rid, { ...req.fields},{ new: true })
+
+        const updatedResult = await resultModel.findByIdAndUpdate(req.params.id, { ...req.fields},{ new: true })
         res.status(201).send({
             success: true,
             message: "Result Updated Successfully",
-            result,
+            updatedResult,
           });
-console.log(result);
+          console.log(req.params);
     } catch (error) {
         console.log(error);
         res.status(500).send({

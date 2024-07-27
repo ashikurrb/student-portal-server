@@ -17,7 +17,7 @@ router.get('/user-result', requireSignIn, getResultController)
 router.get('/all-result', requireSignIn, isAdmin, getAllResultController)
 
 //update result
-router.put('/update-result/:rid', requireSignIn, isAdmin, formidable(), updateResultController)
+router.put('/update-result/:id', requireSignIn, isAdmin, formidable(), updateResultController)
 
 //delete result
 router.delete('/delete-result/:id', requireSignIn, isAdmin, deleteResultController)
