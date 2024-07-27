@@ -72,6 +72,40 @@ export const getAllContentController = async (req, res) => {
     }
 }
 
+//update content
+export const updateContentController = async (req, res) => {
+    try {
+        const { subject, remark, type, contentLink } = req.fields;
+        //validation
+        if (!subject) {
+            return res.status(400).send({ message: "Subject is Required" });
+        }
+        if (!remark) {
+            return res.status(400).send({ message: "Remark is Required" });
+        }
+        if (!type) {
+            return res.status(400).send({ message: "Type is Required" });
+        }
+        if (!contentLink) {
+            return res.status(400).send({ message: "Content Link is Required" });
+        }
+
+        const updatedContent = await contentModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
+        res.status(201).send({
+            success: true,
+            message: "Content Link Updated Successfully",
+            updatedContent,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            error,
+            message: "Error while updating Content Link",
+        });
+    }
+}
+
 //delete content
 export const deleteContentController = async (req, res) => {
     try {

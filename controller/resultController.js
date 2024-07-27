@@ -94,7 +94,6 @@ export const updateResultController = async (req, res) => {
             message: "Result Updated Successfully",
             updatedResult,
           });
-          console.log(req.params);
     } catch (error) {
         console.log(error);
         res.status(500).send({

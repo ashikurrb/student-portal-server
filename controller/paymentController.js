@@ -74,6 +74,40 @@ export const getAllPaymentController = async (req, res) => {
     }
 }
 
+//update payment
+export const updatePaymentController = async (req, res) => {
+    try {
+        const { trxId,method,amount,paymentDate } = req.fields;
+        //validation
+        if (!trxId) {
+            return res.status(400).send({ message: "Transaction ID is Required" });
+        }
+        if (!method) {
+            return res.status(400).send({ message: "Payment Method is Required" });
+        }
+        if (!amount) {
+            return res.status(400).send({ message: "Amount is Required" });
+        }
+        if (!paymentDate) {
+            return res.status(400).send({ message: "Date is Required" });
+        }
+
+        const updatedPayment = await paymentModel.findByIdAndUpdate(req.params.id, { ...req.fields},{ new: true })
+        res.status(201).send({
+            success: true,
+            message: "Payment Updated Successfully",
+            updatedPayment,
+          });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            error,
+            message: "Error while updating Payment Status",
+        });
+    }
+}
+
 //delete Payment Status
 export const deletePaymentController = async (req, res) => {
     try {

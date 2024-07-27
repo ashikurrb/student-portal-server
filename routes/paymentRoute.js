@@ -1,7 +1,7 @@
 import express from 'express';
 import formidable from "express-formidable";
 import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js';
-import { createPaymentController, deletePaymentController, getAllPaymentController, getPaymentController } from '../controller/paymentController.js';
+import { createPaymentController, deletePaymentController, getAllPaymentController, getPaymentController, updatePaymentController } from '../controller/paymentController.js';
 
 const router = express.Router();
 
@@ -15,6 +15,9 @@ router.get('/user-payment', requireSignIn, getPaymentController)
 
 //get all payment
 router.get('/all-payment', requireSignIn, isAdmin, getAllPaymentController)
+
+//update payment
+router.put('/update-payment/:id', requireSignIn, isAdmin, formidable(), updatePaymentController)
 
 //delete payment
 router.delete('/delete-payment/:id', requireSignIn, isAdmin, deletePaymentController)
