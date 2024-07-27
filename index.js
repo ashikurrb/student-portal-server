@@ -4,6 +4,7 @@ import morgan from "morgan";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoute.js"
 import gradeRoutes from "./routes/gradeRoute.js"
+import resultRoutes from "./routes/resultRoute.js"
 import cors from 'cors'
 
 
@@ -24,6 +25,7 @@ app.use(morgan("dev"))
 //routes
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/grade', gradeRoutes)
+app.use('/api/v1/result', resultRoutes)
 
 //rest API
 app.get('/', (req, res) => {

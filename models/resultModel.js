@@ -4,11 +4,11 @@ const resultSchema = new mongoose.Schema({
     subject: {
         type: String,
         require: true,
-        trim: true
+        trim: true,
     },
     marks: {
         type: String,
-        require: true
+        require: true,
     },
     examDate: {
         type: String,
@@ -17,7 +17,7 @@ const resultSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
-        required: true
+        required: true,
     }
 }, { timestamps: true })
 
