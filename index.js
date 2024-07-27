@@ -6,6 +6,7 @@ import authRoutes from "./routes/authRoute.js"
 import gradeRoutes from "./routes/gradeRoute.js"
 import resultRoutes from "./routes/resultRoute.js"
 import paymentRoutes from "./routes/paymentRoute.js"
+import contentRoutes from "./routes/contentRoute.js"
 import cors from 'cors'
 
 
@@ -28,6 +29,7 @@ app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/grade', gradeRoutes)
 app.use('/api/v1/result', resultRoutes)
 app.use('/api/v1/payment', paymentRoutes)
+app.use('/api/v1/content', contentRoutes)
 
 //rest API
 app.get('/', (req, res) => {
