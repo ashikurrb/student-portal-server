@@ -4,8 +4,11 @@ import paymentModel from "../models/paymentModel.js";
 //create payment
 export const createPaymentController = async (req, res) => {
     try {
-        const { trxId, method, amount, paymentDate, user, grade } = req.fields;
+        const { remark, trxId, method, amount, paymentDate, user, grade } = req.fields;
         //validation
+        if (!remark) {
+            return res.status(400).send({ message: "Remark is Required" });
+        }
         if (!trxId) {
             return res.status(400).send({ message: "Transaction ID is Required" });
         }
@@ -81,8 +84,11 @@ export const getAllPaymentController = async (req, res) => {
 //update payment
 export const updatePaymentController = async (req, res) => {
     try {
-        const { trxId, method, amount, paymentDate } = req.fields;
+        const { remark, trxId, method, amount, paymentDate } = req.fields;
         //validation
+        if (!remark) {
+            return res.status(400).send({ message: "Remark is Required" });
+        }
         if (!trxId) {
             return res.status(400).send({ message: "Transaction ID is Required" });
         }

@@ -56,7 +56,7 @@ export const getContentController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while fetching All Content List",
+            message: "Error while fetching Content",
             error
         });
     }

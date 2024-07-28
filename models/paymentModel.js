@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const paymentSchema = new mongoose.Schema({
+    remark: {
+        type: String,
+        require: true,
+        trim: true,
+    },
     trxId: {
         type: String,
         require: true,
