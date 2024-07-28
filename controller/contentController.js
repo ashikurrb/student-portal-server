@@ -1,4 +1,5 @@
 import contentModel from "../models/contentModel.js";
+import userModel from "../models/userModel.js";
 
 export const createContentController = async (req, res) => {
     try {
@@ -41,20 +42,26 @@ export const createContentController = async (req, res) => {
 //get single content
 export const getContentController = async (req, res) => {
     try {
-        console.log(req.grade._id);
+        // Fetch the logged-in user's data using the user ID
+        const user = await userModel.findById(req.user);
+        // Get the grade of the logged-in user
+        const userGrade = user.grade;
+
+        // Find the content that matches the user's grade
         const content = await contentModel
-            .find({ grade: req.grade._id })
+            .find({ grade: userGrade })
+            .populate("grade", "_id");
         res.json(content);
-       
     } catch (error) {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: 'Error fetching Contents',
+            message: "Error while fetching All Content List",
             error
-        })
+        });
     }
 }
+
 
 //get all content
 export const getAllContentController = async (req, res) => {
