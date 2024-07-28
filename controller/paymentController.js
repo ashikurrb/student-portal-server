@@ -4,7 +4,7 @@ import paymentModel from "../models/paymentModel.js";
 //create payment
 export const createPaymentController = async (req, res) => {
     try {
-        const { trxId, method, amount, paymentDate, user } = req.fields;
+        const { trxId, method, amount, paymentDate, user, grade } = req.fields;
         //validation
         if (!trxId) {
             return res.status(400).send({ message: "Transaction ID is Required" });
@@ -20,6 +20,9 @@ export const createPaymentController = async (req, res) => {
         }
         if (!user) {
             return res.status(400).send({ message: "User is Required" });
+        }
+        if (!grade) {
+            return res.status(400).send({ message: "Grade is Required" });
         }
 
         const payment = new paymentModel({ ...req.fields });
@@ -56,12 +59,13 @@ export const getPaymentController = async (req, res) => {
     }
 }
 
-//get all result
+//get all payment status
 export const getAllPaymentController = async (req, res) => {
     try {
         const payment = await paymentModel
             .find({})
             .populate("user")
+            .populate("grade")
             .sort({ createdAt: -1 });
         res.json(payment);
     } catch (error) {
@@ -77,7 +81,7 @@ export const getAllPaymentController = async (req, res) => {
 //update payment
 export const updatePaymentController = async (req, res) => {
     try {
-        const { trxId,method,amount,paymentDate } = req.fields;
+        const { trxId, method, amount, paymentDate } = req.fields;
         //validation
         if (!trxId) {
             return res.status(400).send({ message: "Transaction ID is Required" });
@@ -92,12 +96,12 @@ export const updatePaymentController = async (req, res) => {
             return res.status(400).send({ message: "Date is Required" });
         }
 
-        const updatedPayment = await paymentModel.findByIdAndUpdate(req.params.id, { ...req.fields},{ new: true })
+        const updatedPayment = await paymentModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
         res.status(201).send({
             success: true,
             message: "Payment Updated Successfully",
             updatedPayment,
-          });
+        });
     } catch (error) {
         console.log(error);
         res.status(500).send({

@@ -41,9 +41,11 @@ export const createContentController = async (req, res) => {
 //get single content
 export const getContentController = async (req, res) => {
     try {
+        console.log(req.grade._id);
         const content = await contentModel
             .find({ grade: req.grade._id })
         res.json(content);
+       
     } catch (error) {
         console.log(error);
         res.status(500).send({

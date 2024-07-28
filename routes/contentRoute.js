@@ -11,7 +11,7 @@ const router = express.Router();
 router.post('/create-content', requireSignIn, isAdmin, formidable(), createContentController);
 
 //get single content
-router.get('/user-content', requireSignIn, getContentController);
+router.get('/user-content/:id', requireSignIn, getContentController);
 
 //get all content
 router.get('/all-content', requireSignIn, isAdmin, getAllContentController);

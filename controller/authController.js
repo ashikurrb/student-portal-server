@@ -96,13 +96,13 @@ export const loginController = async (req, res) => {
             })
         }
 
-        // Find user by email or phone
+        // Find user by email or phone and populate grade
         const user = await userModel.findOne({
             $or: [
                 { email: email },
                 { phone: phone }
             ]
-        });
+        }).populate('grade');
 
         //Login validation
         if (!user) {
@@ -123,6 +123,7 @@ export const loginController = async (req, res) => {
 
         //token
         const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d", });
+
         res.status(200).send({
             success: true,
             message: "Login Successful",
@@ -185,7 +186,7 @@ export const forgotPasswordController = async (req, res) => {
     }
 }
 
-//all users list controller
+//Get all users list controller
 export const getAllUsersController = async (req, res) => {
     try {
         const users = await userModel

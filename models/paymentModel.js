@@ -23,6 +23,11 @@ const paymentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         required: true,
+    },
+    grade: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Grade',
+        required: true,
     }
 }, { timestamps: true })
 

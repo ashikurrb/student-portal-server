@@ -5,7 +5,7 @@ import resultModel from '../models/resultModel.js'
 //create result
 export const createResultController = async (req, res) => {
     try {
-        const { subject, marks, examDate, user } = req.fields;
+        const { subject, marks, examDate, user, grade } = req.fields;
         //validation
         if (!subject) {
             return res.status(400).send({ message: "Subject is Required" });
@@ -19,8 +19,11 @@ export const createResultController = async (req, res) => {
         if (!user) {
             return res.status(400).send({ message: "User is Required" });
         }
+        if (!grade) {
+            return res.status(400).send({ message: "Grade is Required" });
+        }
 
-        const results = new resultModel({ ...req.fields, slug: slugify(subject) });
+        const results = new resultModel({ ...req.fields });
         await results.save();
         res.status(201).send({
             success: true,
@@ -43,7 +46,6 @@ export const getResultController = async (req, res) => {
     try {
         const result = await resultModel
             .find({ user: req.user._id })
-
         res.json(result);
     } catch (error) {
         console.log(error);
@@ -61,6 +63,7 @@ export const getAllResultController = async (req, res) => {
         const result = await resultModel
             .find({})
             .populate("user")
+            .populate("grade")
             .sort({ createdAt: -1 });
         res.json(result);
     } catch (error) {
@@ -88,12 +91,12 @@ export const updateResultController = async (req, res) => {
             return res.status(400).send({ message: "Date is Required" });
         }
 
-        const updatedResult = await resultModel.findByIdAndUpdate(req.params.id, { ...req.fields},{ new: true })
+        const updatedResult = await resultModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
         res.status(201).send({
             success: true,
             message: "Result Updated Successfully",
             updatedResult,
-          });
+        });
     } catch (error) {
         console.log(error);
         res.status(500).send({
