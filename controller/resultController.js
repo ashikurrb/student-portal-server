@@ -1,12 +1,14 @@
 import slugify from 'slugify';
 import resultModel from '../models/resultModel.js'
 
-
 //create result
 export const createResultController = async (req, res) => {
     try {
-        const { subject, marks, examDate, user, grade } = req.fields;
+        const { type, subject, marks, examDate, user, grade } = req.fields;
         //validation
+        if (!type) {
+            return res.status(400).send({ message: "Exam Type is Required" });
+        }
         if (!subject) {
             return res.status(400).send({ message: "Subject is Required" });
         }

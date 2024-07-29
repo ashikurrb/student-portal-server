@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const resultSchema = new mongoose.Schema({
+    type: {
+        type: String,
+        require: true,
+        trim: true,
+    },
     subject: {
         type: String,
         require: true,
