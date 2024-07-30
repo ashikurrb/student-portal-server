@@ -1,6 +1,8 @@
 import userModel from '../models/userModel.js'
 import { comparePassword, hashPassword } from '../helpers/authHelper.js'
 import JWT from 'jsonwebtoken'
+import paymentModel from '../models/paymentModel.js';
+import resultModel from '../models/resultModel.js';
 
 export const registerController = async (req, res) => {
     try {
@@ -24,18 +26,6 @@ export const registerController = async (req, res) => {
         if (!grade) {
             return res.send({ message: "Grade  is Required" })
         }
-
-        // //find user by email
-        // const existingUser = await userModel.findOne({ email })
-
-        // //check existing user
-        // if (existingUser) {
-        //     return res.status(200).send({
-        //         success: false,
-        //         message: "Already Registered. Please Log In"
-        //     })
-        // }
-
 
         // Find user by email or phone
         const existingUser = await userModel.findOne({
@@ -61,11 +51,19 @@ export const registerController = async (req, res) => {
         }
 
         //register User
+        //condition 
+        if (phone && phone.length < 11) {
+            return res.json({ message: "Mobile Number must be 11 digit" })
+        }
+        if (password && password.length < 6) {
+            return res.json({ message: "Password must be 6 digit" })
+        }
         //encrypting password
-        const hashedPassword = await hashPassword(password)
+        const hashedPassword = password ? await hashPassword(password) : undefined;
 
         //save
         const user = await new userModel({ name, email, phone, answer, password: hashedPassword, grade }).save()
+        //password validation
         res.status(201).send({
             success: true,
             message: "Registration Successful",
@@ -123,7 +121,6 @@ export const loginController = async (req, res) => {
 
         //token
         const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d", });
-
         res.status(200).send({
             success: true,
             message: "Login Successful",
@@ -169,7 +166,14 @@ export const forgotPasswordController = async (req, res) => {
                 error
             })
         }
-        const hashed = await hashPassword(newPassword)
+
+        //condition 
+        if (newPassword && newPassword.length < 6) {
+            return res.json({ message: "Password must be 6 digit" })
+        }
+        //encrypting password
+        const hashed = newPassword ? await hashPassword(newPassword) : undefined;
+
         await userModel.findByIdAndUpdate(user._id, { password: hashed })
         res.status(200).send({
             success: true,
@@ -209,10 +213,15 @@ export const getAllUsersController = async (req, res) => {
 export const deleteUserController = async (req, res) => {
     try {
         const { id } = req.params;
-        await userModel.findByIdAndDelete(id)
+        const user = await userModel.findById(id);
+        await Promise.all([
+            userModel.findByIdAndDelete(id),
+            paymentModel.deleteMany({ user: id }),
+            resultModel.deleteMany({ user: id })
+        ]);
         res.status(200).send({
             success: true,
-            message: "User Deleted Successfully",
+            message: "User & Data Deleted Successfully",
         })
     } catch (error) {
         console.log(error);

@@ -1,5 +1,6 @@
 import slugify from "slugify";
 import gradeModel from "../models/gradeModel.js";
+import contentModel from "../models/contentModel.js";
 
 //create grade controller
 export const createGradeController = async (req, res) => {
@@ -37,6 +38,9 @@ export const updateGradeController = async (req, res) => {
     try {
         const { name } = req.body;
         const { id } = req.params;
+        if (!name) {
+            return res.status(401).send({ message: "Name is Required" })
+        }
         const grade = await gradeModel.findByIdAndUpdate(id, { name, slug: slugify(name) }, { new: true })
         res.status(200).send({
             success: true,
@@ -57,6 +61,7 @@ export const updateGradeController = async (req, res) => {
 export const getAllGradesController = async (req, res) => {
     try {
         const grade = await gradeModel.find({})
+            .sort({ createdAt: -1 })
         res.status(200).send({
             success: true,
             message: "Grades List fetched successfully",
@@ -95,7 +100,11 @@ export const getSingleGradeController = async (req, res) => {
 export const deleteGradeController = async (req, res) => {
     try {
         const { id } = req.params;
-        await gradeModel.findByIdAndDelete(id);
+        const grade = await gradeModel.findById(id);
+        await Promise.all([
+            gradeModel.findByIdAndDelete(id),
+            contentModel.deleteMany({ grade: id }),
+        ]);
         res.status(200).send({
             success: true,
             message: "Grade deleted successfully",
