@@ -40,12 +40,12 @@ export const registerController = async (req, res) => {
             if (existingUser.email === email) {
                 return res.status(200).send({
                     success: false,
-                    message: "Email Already Registered"
+                    message: "Email is already registered"
                 });
             } else if (existingUser.phone === phone) {
                 return res.status(200).send({
                     success: false,
-                    message: "Phone Number Already Exist"
+                    message: "Phone Number is already exist"
                 });
             }
         }
@@ -106,7 +106,7 @@ export const loginController = async (req, res) => {
         if (!user) {
             return res.status(404).send({
                 success: false,
-                message: 'No User Found. Please Register',
+                message: 'No user found. Please Register',
             })
         }
 
@@ -177,14 +177,14 @@ export const forgotPasswordController = async (req, res) => {
         await userModel.findByIdAndUpdate(user._id, { password: hashed })
         res.status(200).send({
             success: true,
-            message: "Password Changed Successfully"
+            message: "Password changed successfully"
         })
 
     } catch (error) {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error in Forgot Password",
+            message: "Error in forgot password",
             error
         })
     }
@@ -202,7 +202,7 @@ export const getAllUsersController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error While Getting All Users",
+            message: "Error fetching all users",
             error,
         });
     }
@@ -218,18 +218,57 @@ export const updateUserGradeController = async (req, res) => {
         const updatedUserGrade = await userModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
         res.status(201).send({
             success: true,
-            message: "User's Grade Updated Successfully",
+            message: "User's grade updated successfully",
         });
     } catch (error) {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error updating user's Grade",
+            message: "Error updating user's grade",
             error
         })
     }
 }
 
+//update user profile
+export const updateUserProfileController = async (req, res) => {
+    try {
+        const { name, phone, password, answer } = req.body;
+        const user = await userModel.findById(req.user._id);
+        if (!name) {
+            return res.send({ message: "Name is Required" })
+        }
+        if (!phone) {
+            return res.send({ message: "Phone Number is Required" })
+        }
+        if (!password) {
+            return res.send({ message: "Password is Required" })
+        }
+        if (password && password.length < 6) {
+            return res.json({ error: "Password must be 6 digit" })
+        }
+        const hashedPassword = password ? await hashPassword(password) : undefined;
+        const updatedUser = await userModel.findByIdAndUpdate(req.user._id, {
+            name: name || user.name,
+            phone: phone || user.phone,
+            answer: answer || user.answer,
+            password: hashedPassword || user.password
+        }, { new: true });
+        res.status(200).send({
+            success: true,
+            message: 'Profile Updated Successfully',
+            updatedUser
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Error updating profile",
+            error
+        })
+    }
+}
 
 //delete user controller
 export const deleteUserController = async (req, res) => {
