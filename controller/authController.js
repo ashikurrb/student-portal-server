@@ -208,6 +208,28 @@ export const getAllUsersController = async (req, res) => {
     }
 };
 
+//update user's grade controller
+export const updateUserGradeController = async (req, res) => {
+    try {
+        const { grade } = req.fields;
+        if (!grade) {
+            return res.status(400).send({ message: "New Grade is Required" });
+        }
+        const updatedUserGrade = await userModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
+        res.status(201).send({
+            success: true,
+            message: "User's Grade Updated Successfully",
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Error updating user's Grade",
+            error
+        })
+    }
+}
+
 
 //delete user controller
 export const deleteUserController = async (req, res) => {

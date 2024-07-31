@@ -5,7 +5,7 @@ import contentModel from "../models/contentModel.js";
 //create grade controller
 export const createGradeController = async (req, res) => {
     try {
-        const { name } = req.body;
+        const { name } = req.fields;
         if (!name) {
             return res.status(401).send({ message: "Name is Required" })
         }
@@ -36,7 +36,7 @@ export const createGradeController = async (req, res) => {
 //update grade controller
 export const updateGradeController = async (req, res) => {
     try {
-        const { name } = req.body;
+        const { name } = req.fields;
         const { id } = req.params;
         if (!name) {
             return res.status(401).send({ message: "Name is Required" })

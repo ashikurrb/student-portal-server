@@ -1,4 +1,5 @@
 import express from 'express';
+import formidable from "express-formidable";
 import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js'
 import { createGradeController, deleteGradeController, getAllGradesController, getSingleGradeController, updateGradeController } from '../controller/gradeController.js';
 
@@ -7,10 +8,10 @@ const router = express.Router();
 //routes
 
 //create grade
-router.post('/create-grade', requireSignIn, isAdmin, createGradeController)
+router.post('/create-grade', requireSignIn, isAdmin, formidable(), createGradeController)
 
 //update grade
-router.put('/update-grade/:id', requireSignIn, isAdmin, updateGradeController)
+router.put('/update-grade/:id', requireSignIn, isAdmin, formidable(), updateGradeController)
 
 //get all grade
 router.get('/all-grades', getAllGradesController)

@@ -81,8 +81,11 @@ export const getAllResultController = async (req, res) => {
 //update result
 export const updateResultController = async (req, res) => {
     try {
-        const { subject, marks, examDate } = req.fields;
+        const { type, subject, marks, examDate } = req.fields;
         //validation
+        if (!type) {
+            return res.status(400).send({ message: "Exam Type is Required" });
+        }
         if (!subject) {
             return res.status(400).send({ message: "Subject is Required" });
         }
