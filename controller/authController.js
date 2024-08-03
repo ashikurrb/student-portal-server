@@ -292,19 +292,27 @@ export const uploadUserAvatarController = async (req, res) => {
     }
 
     try {
-        // Upload to Cloudinary
+
+        //find the user by id first
+        const userId = req.user._id;
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+
+        //if user have old avatar, delete it first
+        if (user.avatar) {
+            const publicId = user.avatar.split('/').pop().split('.')[0];
+            await cloudinary.uploader.destroy(`5points-student-portal/avatar/${publicId}`);
+        }
+
+        // Photo Upload to Cloudinary
         const result = await cloudinary.uploader.upload(file.path, {
             folder: '5points-student-portal/avatar' // Specify the folder here
         });
         console.log('Cloudinary Upload Result:', result); // Log result for debugging
 
-        // Assume userId is available (e.g., from request params or authentication)
-        const userId = req.user._id; // You should obtain this securely
         // Update the user's photo URL in the database
-        const user = await userModel.findById(userId);
-        if (!user) {
-            return res.status(404).send({ message: 'User not found' });
-        }
         user.avatar = result.secure_url;
         await user.save();
 
