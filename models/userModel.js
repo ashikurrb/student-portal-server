@@ -28,14 +28,15 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    avatarUrl: {
+    avatar: {
         type: String,
+        default: "https://res.cloudinary.com/ashikurrb/image/upload/v1722672312/avatar/TestUserImg_ivxe72.png",
     },
     role: {
         type: Number,
         default: 0
     },
-    
+
 }, { timestamps: true })
 
 export default mongoose.model('users', userSchema)

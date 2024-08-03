@@ -1,8 +1,19 @@
 import userModel from '../models/userModel.js'
-import { comparePassword, hashPassword } from '../helpers/authHelper.js'
-import JWT from 'jsonwebtoken'
 import paymentModel from '../models/paymentModel.js';
 import resultModel from '../models/resultModel.js';
+import { comparePassword, hashPassword } from '../helpers/authHelper.js'
+import JWT from 'jsonwebtoken'
+import { v2 as cloudinary } from 'cloudinary';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+// Configuration
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 export const registerController = async (req, res) => {
     try {
@@ -125,6 +136,7 @@ export const loginController = async (req, res) => {
             success: true,
             message: "Login Successful",
             user: {
+                avatar: user.avatar,
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
@@ -233,7 +245,7 @@ export const updateUserGradeController = async (req, res) => {
 //update user profile
 export const updateUserProfileController = async (req, res) => {
     try {
-        const { name, phone, password, answer } = req.body;
+        const { avatar, name, phone, password, answer } = req.body;
         const user = await userModel.findById(req.user._id);
         if (!name) {
             return res.send({ message: "Name is Required" })
@@ -252,6 +264,7 @@ export const updateUserProfileController = async (req, res) => {
             name: name || user.name,
             phone: phone || user.phone,
             answer: answer || user.answer,
+            avatar: avatar || user.avatar,
             password: hashedPassword || user.password
         }, { new: true });
         res.status(200).send({
@@ -269,6 +282,39 @@ export const updateUserProfileController = async (req, res) => {
         })
     }
 }
+
+//upload/update user photo with cloudinary
+export const uploadUserAvatarController = async (req, res) => {
+    console.log('Request Files:', req.files);
+    const file = req.files.photo;
+    if (!file) {
+        return res.status(400).send({ message: 'No file uploaded' });
+    }
+
+    try {
+        // Upload to Cloudinary
+        const result = await cloudinary.uploader.upload(file.path, {
+            folder: 'avatar' // Specify the folder here
+        });
+        // Assume userId is available (e.g., from request params or authentication)
+        const userId = req.user._id; // You should obtain this securely
+        // Update the user's photo URL in the database
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+        user.avatar = result.secure_url;
+        await user.save();
+
+        return res.status(200).send({
+            message: 'Photo uploaded and user updated successfully',
+            url: result.secure_url,
+        });
+    } catch (error) {
+        return res.status(500).send({ message: 'Upload to Cloudinary failed', error });
+    }
+};
+
 
 //delete user controller
 export const deleteUserController = async (req, res) => {

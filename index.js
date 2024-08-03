@@ -8,6 +8,7 @@ import resultRoutes from "./routes/resultRoute.js"
 import paymentRoutes from "./routes/paymentRoute.js"
 import contentRoutes from "./routes/contentRoute.js"
 import cors from 'cors'
+import formidable from 'express-formidable';
 
 
 //dotenv config
@@ -23,6 +24,7 @@ const app = express();
 app.use(cors())
 app.use(express.json())
 app.use(morgan("dev"))
+app.use('/api/v1/auth/upload-avatar', formidable())
 
 //routes
 app.use('/api/v1/auth', authRoutes)
@@ -30,6 +32,7 @@ app.use('/api/v1/grade', gradeRoutes)
 app.use('/api/v1/result', resultRoutes)
 app.use('/api/v1/payment', paymentRoutes)
 app.use('/api/v1/content', contentRoutes)
+
 
 //rest API
 app.get('/', (req, res) => {
