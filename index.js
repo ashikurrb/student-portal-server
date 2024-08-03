@@ -36,7 +36,7 @@ app.use('/api/v1/content', contentRoutes)
 
 //rest API
 app.get('/', (req, res) => {
-    res.send("<h1>C-LAB Student Portal</h1>")
+    res.send("<h1>5points Student Portal</h1>")
 })
 
 //PORT
