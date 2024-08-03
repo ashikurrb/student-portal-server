@@ -102,7 +102,7 @@ export const updateContentController = async (req, res) => {
         const updatedContent = await contentModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
         res.status(201).send({
             success: true,
-            message: "Content Link Updated Successfully",
+            message: "Content Updated Successfully",
             updatedContent,
         });
     } catch (error) {
@@ -110,7 +110,7 @@ export const updateContentController = async (req, res) => {
         res.status(500).send({
             success: false,
             error,
-            message: "Error while updating Content Link",
+            message: "Error updating content",
         });
     }
 }
@@ -129,7 +129,7 @@ export const deleteContentController = async (req, res) => {
         res.status(500).send({
             success: false,
             error,
-            message: "Error while deleting Content"
+            message: "Error deleting content"
         })
     }
 }

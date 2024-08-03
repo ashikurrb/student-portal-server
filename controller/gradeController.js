@@ -51,7 +51,7 @@ export const updateGradeController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while updating Grade",
+            message: "Error updating grade",
             error
         })
     }
@@ -64,14 +64,14 @@ export const getAllGradesController = async (req, res) => {
             .sort({ createdAt: -1 })
         res.status(200).send({
             success: true,
-            message: "Grades List fetched successfully",
+            message: "Grade List fetched successfully",
             grade,
         })
     } catch (error) {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while fetching All Grades",
+            message: "Error fetching all grades",
             error
         })
     }
@@ -90,7 +90,7 @@ export const getSingleGradeController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while fetching single Grade",
+            message: "Error while fetching grade",
             error
         })
     }
@@ -114,7 +114,7 @@ export const deleteGradeController = async (req, res) => {
         res.status(500).send({
             success: false,
             error,
-            message: "Error while deleting Grade"
+            message: "Error while deleting grade"
         })
     }
 }

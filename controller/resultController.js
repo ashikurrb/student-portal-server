@@ -37,7 +37,7 @@ export const createResultController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while Creating Result",
+            message: "Error creating result",
             error
         });
     }
@@ -53,7 +53,7 @@ export const getResultController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: 'Error fetching Result',
+            message: 'Error fetching result',
             error
         })
     }
@@ -72,7 +72,7 @@ export const getAllResultController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while fetching All Results",
+            message: "Error fetching all Results",
             error
         });
     }
@@ -107,7 +107,7 @@ export const updateResultController = async (req, res) => {
         res.status(500).send({
             success: false,
             error,
-            message: "Error while updating result",
+            message: "Error updating result",
         });
     }
 }
@@ -126,7 +126,7 @@ export const deleteResultController = async (req, res) => {
         res.status(500).send({
             success: false,
             error,
-            message: "Error while deleting Result"
+            message: "Error deleting Result"
         })
     }
 }

@@ -77,7 +77,7 @@ export const registerController = async (req, res) => {
         //password validation
         res.status(201).send({
             success: true,
-            message: "Registration Successful",
+            message: "Registration Successful! Please Login",
             user
         })
 
@@ -85,7 +85,7 @@ export const registerController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while Registration",
+            message: "Error while registration",
             error
         })
     }
@@ -117,7 +117,7 @@ export const loginController = async (req, res) => {
         if (!user) {
             return res.status(404).send({
                 success: false,
-                message: 'No user found. Please Register',
+                message: 'No user found. Please register',
             })
         }
 
@@ -174,7 +174,7 @@ export const forgotPasswordController = async (req, res) => {
         if (!user) {
             return res.status(404).send({
                 success: false,
-                message: "Email or Answer not matched",
+                message: "Email or Answer are not matched",
                 error
             })
         }
@@ -189,14 +189,14 @@ export const forgotPasswordController = async (req, res) => {
         await userModel.findByIdAndUpdate(user._id, { password: hashed })
         res.status(200).send({
             success: true,
-            message: "Password changed successfully"
+            message: "Password reset successful!"
         })
 
     } catch (error) {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error in forgot password",
+            message: "Error in Forgot password",
             error
         })
     }
@@ -230,13 +230,13 @@ export const updateUserGradeController = async (req, res) => {
         const updatedUserGrade = await userModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
         res.status(201).send({
             success: true,
-            message: "User's grade updated successfully",
+            message: "Users grade updated successfully",
         });
     } catch (error) {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error updating user's grade",
+            message: "Error updating users grade",
             error
         })
     }
@@ -354,7 +354,7 @@ export const deleteUserController = async (req, res) => {
         res.status(500).send({
             success: false,
             error,
-            message: "Error while Deleting User"
+            message: "Error while deleting user"
         })
     }
 }

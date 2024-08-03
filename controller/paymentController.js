@@ -40,7 +40,7 @@ export const createPaymentController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while Creating Payment Status",
+            message: "Error creating payment status",
             error
         });
     }
@@ -56,7 +56,7 @@ export const getPaymentController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: 'Error fetching Payment Status',
+            message: 'Error fetching payment status',
             error
         })
     }
@@ -75,7 +75,7 @@ export const getAllPaymentController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while fetching All Payment List",
+            message: "Error fetching all payment details",
             error
         });
     }
@@ -113,7 +113,7 @@ export const updatePaymentController = async (req, res) => {
         res.status(500).send({
             success: false,
             error,
-            message: "Error while updating Payment Status",
+            message: "Error updating payment status",
         });
     }
 }
@@ -125,14 +125,14 @@ export const deletePaymentController = async (req, res) => {
         await paymentModel.findByIdAndDelete(id);
         res.status(200).send({
             success: true,
-            message: "Payment Status deleted successfully",
+            message: "Payment status deleted successfully",
         })
     } catch (error) {
         console.log(error);
         res.status(500).send({
             success: false,
             error,
-            message: "Error while deleting Payment Status"
+            message: "Error deleting payment status"
         })
     }
 }
