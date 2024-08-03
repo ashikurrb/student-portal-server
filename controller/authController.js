@@ -294,8 +294,10 @@ export const uploadUserAvatarController = async (req, res) => {
     try {
         // Upload to Cloudinary
         const result = await cloudinary.uploader.upload(file.path, {
-            folder: 'avatar' // Specify the folder here
+            folder: '5points-student-portal/avatar' // Specify the folder here
         });
+        console.log('Cloudinary Upload Result:', result); // Log result for debugging
+
         // Assume userId is available (e.g., from request params or authentication)
         const userId = req.user._id; // You should obtain this securely
         // Update the user's photo URL in the database
@@ -311,6 +313,7 @@ export const uploadUserAvatarController = async (req, res) => {
             url: result.secure_url,
         });
     } catch (error) {
+        console.error('Cloudinary Upload Error:', error); // Log error details
         return res.status(500).send({ message: 'Upload to Cloudinary failed', error });
     }
 };
@@ -321,10 +324,18 @@ export const deleteUserController = async (req, res) => {
     try {
         const { id } = req.params;
         const user = await userModel.findById(id);
+
+        // Extract public_id from the Cloudinary URL
+        const avatarUrl = user.avatar;
+        const publicId = avatarUrl
+            ? '5points-student-portal/avatar/' + avatarUrl.split('/').pop().split('.')[0]
+            : null;
+
         await Promise.all([
             userModel.findByIdAndDelete(id),
             paymentModel.deleteMany({ user: id }),
-            resultModel.deleteMany({ user: id })
+            resultModel.deleteMany({ user: id }),
+            publicId ? cloudinary.uploader.destroy(publicId) : null,
         ]);
         res.status(200).send({
             success: true,
