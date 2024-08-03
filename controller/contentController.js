@@ -25,7 +25,7 @@ export const createContentController = async (req, res) => {
         await content.save();
         res.status(201).send({
             success: true,
-            message: "Content Link Created Successfully",
+            message: "Content created successfully",
             content,
         });
 
@@ -33,7 +33,7 @@ export const createContentController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while Creating Content Link",
+            message: "Error creating content",
             error
         });
     }
@@ -56,7 +56,7 @@ export const getContentController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while fetching Content",
+            message: "Error fetching content",
             error
         });
     }
@@ -75,7 +75,7 @@ export const getAllContentController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while fetching All Content List",
+            message: "Error while fetching all contents",
             error
         });
     }
@@ -102,7 +102,7 @@ export const updateContentController = async (req, res) => {
         const updatedContent = await contentModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
         res.status(201).send({
             success: true,
-            message: "Content Updated Successfully",
+            message: "Content updated successfully",
             updatedContent,
         });
     } catch (error) {

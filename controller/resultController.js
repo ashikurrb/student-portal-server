@@ -29,7 +29,7 @@ export const createResultController = async (req, res) => {
         await results.save();
         res.status(201).send({
             success: true,
-            message: "Result Created Successfully",
+            message: "Result created successfully",
             results,
         });
 
@@ -72,7 +72,7 @@ export const getAllResultController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error fetching all Results",
+            message: "Error fetching all results",
             error
         });
     }
@@ -99,7 +99,7 @@ export const updateResultController = async (req, res) => {
         const updatedResult = await resultModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
         res.status(201).send({
             success: true,
-            message: "Result Updated Successfully",
+            message: "Result updated successfully",
             updatedResult,
         });
     } catch (error) {

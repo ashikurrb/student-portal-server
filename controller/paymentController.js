@@ -32,7 +32,7 @@ export const createPaymentController = async (req, res) => {
         await payment.save();
         res.status(201).send({
             success: true,
-            message: "Payment Status Created Successfully",
+            message: "Payment status created successfully",
             payment,
         });
 
@@ -105,7 +105,7 @@ export const updatePaymentController = async (req, res) => {
         const updatedPayment = await paymentModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
         res.status(201).send({
             success: true,
-            message: "Payment Updated Successfully",
+            message: "Payment updated successfully",
             updatedPayment,
         });
     } catch (error) {

@@ -56,7 +56,7 @@ export const registerController = async (req, res) => {
             } else if (existingUser.phone === phone) {
                 return res.status(200).send({
                     success: false,
-                    message: "Phone Number is already exist"
+                    message: "Phone number is already exist"
                 });
             }
         }
@@ -64,7 +64,7 @@ export const registerController = async (req, res) => {
         //register User
         //condition 
         if (phone && phone.length < 11) {
-            return res.json({ message: "Mobile Number must be 11 digit" })
+            return res.json({ message: "Mobile number must be 11 digit" })
         }
         if (password && password.length < 6) {
             return res.json({ message: "Password must be 6 digit" })
@@ -77,7 +77,7 @@ export const registerController = async (req, res) => {
         //password validation
         res.status(201).send({
             success: true,
-            message: "Registration Successful! Please Login",
+            message: "Registration successful! Please login",
             user
         })
 
@@ -174,7 +174,7 @@ export const forgotPasswordController = async (req, res) => {
         if (!user) {
             return res.status(404).send({
                 success: false,
-                message: "Email or Answer are not matched",
+                message: "Email or answer are not matched",
                 error
             })
         }
@@ -269,7 +269,7 @@ export const updateUserProfileController = async (req, res) => {
         }, { new: true });
         res.status(200).send({
             success: true,
-            message: 'Profile Updated Successfully',
+            message: 'Profile updated successfully',
             updatedUser
         });
 
@@ -347,7 +347,7 @@ export const deleteUserController = async (req, res) => {
         ]);
         res.status(200).send({
             success: true,
-            message: "User & Data Deleted Successfully",
+            message: "User & Data deleted successfully",
         })
     } catch (error) {
         console.log(error);

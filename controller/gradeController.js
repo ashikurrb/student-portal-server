@@ -20,14 +20,14 @@ export const createGradeController = async (req, res) => {
             ({ name, slug: slugify(name) }).save();
         res.status(201).send({
             success: true,
-            message: "New Grade Created",
+            message: "Grade created successfully",
             grade
         })
     } catch (error) {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while Creating Grade",
+            message: "Error while creating grade",
             error
         })
     }
