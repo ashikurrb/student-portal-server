@@ -4,6 +4,17 @@ import userModel from "../models/userModel.js";
 import resultModel from "../models/resultModel.js";
 import paymentModel from "../models/paymentModel.js";
 import contentModel from "../models/contentModel.js";
+import { v2 as cloudinary } from 'cloudinary';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+// Configuration
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 //create grade controller
 export const createGradeController = async (req, res) => {
@@ -103,24 +114,54 @@ export const getSingleGradeController = async (req, res) => {
 export const deleteGradeController = async (req, res) => {
     try {
         const { id } = req.params;
+
+        // Find the grade and check if it exists
         const grade = await gradeModel.findById(id);
-        await Promise.all([
-            gradeModel.findByIdAndDelete(id),
-            userModel.deleteMany({ grade: id }),
-            resultModel.deleteMany({ grade: id }),
-            paymentModel.deleteMany({ grade: id }),
-            contentModel.deleteMany({ grade: id }),
-        ]);
+        if (!grade) {
+            return res.status(404).send({
+                success: false,
+                message: "Grade not found",
+            });
+        }
+
+        // Find the user associated with the grade
+        const user = await userModel.findOne({ grade: id });
+        if (user) {
+            // Extract public_id from the Cloudinary URL
+            const avatarUrl = user.avatar;
+            const publicId = avatarUrl
+                ? '5points-student-portal/avatar/' + avatarUrl.split('/').pop().split('.')[0]
+                : null;
+
+            // Delete related records and Cloudinary image if exists
+            await Promise.all([
+                gradeModel.findByIdAndDelete(id),
+                userModel.deleteMany({ grade: id }),
+                publicId ? cloudinary.uploader.destroy(publicId) : null,
+                resultModel.deleteMany({ grade: id }),
+                paymentModel.deleteMany({ grade: id }),
+                contentModel.deleteMany({ grade: id }),
+            ]);
+        } else {
+            // If no user found, just delete the grade
+            await Promise.all([
+                gradeModel.findByIdAndDelete(id),
+                resultModel.deleteMany({ grade: id }),
+                paymentModel.deleteMany({ grade: id }),
+                contentModel.deleteMany({ grade: id }),
+            ]);
+        }
+
         res.status(200).send({
             success: true,
             message: "Grade deleted successfully",
-        })
+        });
     } catch (error) {
         console.log(error);
         res.status(500).send({
             success: false,
             error,
-            message: "Error while deleting grade"
-        })
+            message: "Error while deleting grade",
+        });
     }
-}
+};

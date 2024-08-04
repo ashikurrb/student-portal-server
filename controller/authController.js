@@ -331,6 +331,7 @@ export const uploadUserAvatarController = async (req, res) => {
 export const deleteUserController = async (req, res) => {
     try {
         const { id } = req.params;
+        
         const user = await userModel.findById(id);
 
         // Extract public_id from the Cloudinary URL
