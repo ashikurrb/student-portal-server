@@ -1,5 +1,8 @@
 import slugify from "slugify";
 import gradeModel from "../models/gradeModel.js";
+import userModel from "../models/userModel.js";
+import resultModel from "../models/resultModel.js";
+import paymentModel from "../models/paymentModel.js";
 import contentModel from "../models/contentModel.js";
 
 //create grade controller
@@ -103,6 +106,9 @@ export const deleteGradeController = async (req, res) => {
         const grade = await gradeModel.findById(id);
         await Promise.all([
             gradeModel.findByIdAndDelete(id),
+            userModel.deleteMany({ grade: id }),
+            resultModel.deleteMany({ grade: id }),
+            paymentModel.deleteMany({ grade: id }),
             contentModel.deleteMany({ grade: id }),
         ]);
         res.status(200).send({

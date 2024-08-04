@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
     },
     avatar: {
         type: String,
-        default: "https://res.cloudinary.com/ashikurrb/image/upload/v1722672312/avatar/TestUserImg_ivxe72.png",
+        default: "https://res.cloudinary.com/ashikurrb/image/upload/v1722701852/5points-student-portal/default_avatar.png",
     },
     role: {
         type: Number,
