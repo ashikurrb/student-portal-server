@@ -331,7 +331,7 @@ export const uploadUserAvatarController = async (req, res) => {
 export const deleteUserController = async (req, res) => {
     try {
         const { id } = req.params;
-        
+
         const user = await userModel.findById(id);
 
         // Extract public_id from the Cloudinary URL
@@ -348,7 +348,7 @@ export const deleteUserController = async (req, res) => {
         ]);
         res.status(200).send({
             success: true,
-            message: "User & Data deleted successfully",
+            message: "User & their data deleted successfully",
         })
     } catch (error) {
         console.log(error);
