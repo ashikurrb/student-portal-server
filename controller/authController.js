@@ -202,6 +202,36 @@ export const forgotPasswordController = async (req, res) => {
     }
 }
 
+//get logged-in user profile
+export const getProfileDataController = async (req, res) => {
+    try {
+        // Extract token from request headers
+        const token = req.headers.authorization;
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: "Access denied, no token provided",
+            });
+        }
+        // Verify token
+        const decoded = JWT.verify(token, process.env.JWT_SECRET);
+        // Fetch user data from the database
+        const user = await userModel.findById(decoded._id).populate('grade').select('-password');
+        // Send user profile data as response
+        res.json({
+            message: "Profile data fetched successfully",
+            user
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: "Error fetching profile data",
+            error,
+        });
+    }
+};
+
 //Get all users list controller
 export const getAllUsersController = async (req, res) => {
     try {
