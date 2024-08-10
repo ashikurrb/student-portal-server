@@ -4,6 +4,7 @@ import resultModel from '../models/resultModel.js';
 import { comparePassword, hashPassword } from '../helpers/authHelper.js'
 import JWT from 'jsonwebtoken'
 import { v2 as cloudinary } from 'cloudinary';
+import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -275,28 +276,39 @@ export const updateUserGradeController = async (req, res) => {
 //update user profile
 export const updateUserProfileController = async (req, res) => {
     try {
-        const { avatar, name, phone, password, answer } = req.body;
+        const { avatar, name, phone, oldPassword, newPassword, answer } = req.body;
         const user = await userModel.findById(req.user._id);
+
         if (!name) {
-            return res.send({ message: "Name is Required" })
+            return res.send({ message: "Name is Required" });
         }
         if (!phone) {
-            return res.send({ message: "Phone Number is Required" })
+            return res.send({ message: "Phone Number is Required" });
         }
-        if (!password) {
-            return res.send({ message: "Password is Required" })
+        if (newPassword && newPassword.length < 6) {
+            return res.json({ error: "Password must be 6 digits" });
         }
-        if (password && password.length < 6) {
-            return res.json({ error: "Password must be 6 digit" })
+        if (newPassword) {
+            if (!oldPassword) {
+                return res.status(400).json({ error: "Old password is required to set a new password" });
+            }
+
+            const isMatch = await bcrypt.compare(oldPassword, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ error: "Old password is incorrect" });
+            }
         }
-        const hashedPassword = password ? await hashPassword(password) : undefined;
+
+        const hashedPassword = newPassword ? await hashPassword(newPassword) : user.password;
+
         const updatedUser = await userModel.findByIdAndUpdate(req.user._id, {
             name: name || user.name,
             phone: phone || user.phone,
             answer: answer || user.answer,
             avatar: avatar || user.avatar,
-            password: hashedPassword || user.password
+            password: hashedPassword
         }, { new: true });
+
         res.status(200).send({
             success: true,
             message: 'Profile updated successfully',
@@ -309,9 +321,10 @@ export const updateUserProfileController = async (req, res) => {
             success: false,
             message: "Error updating profile",
             error
-        })
+        });
     }
-}
+};
+
 
 //upload/update user photo with cloudinary
 export const uploadUserAvatarController = async (req, res) => {
