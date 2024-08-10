@@ -307,7 +307,7 @@ export const updateUserProfileController = async (req, res) => {
             answer: answer || user.answer,
             avatar: avatar || user.avatar,
             password: hashedPassword
-        }, { new: true });
+        }, { new: true }).populate("grade");
 
         res.status(200).send({
             success: true,
