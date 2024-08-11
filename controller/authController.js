@@ -278,11 +278,9 @@ export const updateUserProfileController = async (req, res) => {
     try {
         const { avatar, name, phone, oldPassword, newPassword, answer } = req.body;
         const user = await userModel.findById(req.user._id);
-        if (!name) {
-            return res.send({ message: "Name is required" });
-        }
-        if (!phone) {
-            return res.send({ message: "Phone number is required" });
+        // Check if oldPassword is provided when updating profile details or password
+        if ((name || phone || avatar || answer) && !oldPassword) {
+            return res.status(400).json({ error: "Password is required to update profile" });
         }
         if (newPassword && newPassword.length < 6) {
             return res.json({ error: "Password must be 6 digits" });
