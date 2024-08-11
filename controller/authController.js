@@ -288,14 +288,14 @@ export const updateUserProfileController = async (req, res) => {
         if (newPassword && newPassword.length < 6) {
             return res.json({ error: "Password must be 6 digits" });
         }
-        if (newPassword) {
+        if (newPassword || oldPassword) {
             if (!oldPassword) {
-                return res.status(400).json({ error: "Old password is required to set a new password" });
+                return res.status(400).json({ error: "Password is required to set a new password" });
             }
 
             const isMatch = await bcrypt.compare(oldPassword, user.password);
             if (!isMatch) {
-                return res.status(400).json({ error: "Old password is incorrect" });
+                return res.status(400).json({ error: "Password is incorrect" });
             }
         }
 
@@ -324,7 +324,6 @@ export const updateUserProfileController = async (req, res) => {
         });
     }
 };
-
 
 //upload/update user photo with cloudinary
 export const uploadUserAvatarController = async (req, res) => {
