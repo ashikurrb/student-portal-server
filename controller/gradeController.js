@@ -27,7 +27,7 @@ export const createGradeController = async (req, res) => {
         if (existingGrade) {
             return res.status(409).send({
                 success: false,
-                message: "Grade already exist"
+                message: "Grade already exists"
             })
         }
         const grade = await new gradeModel
@@ -59,7 +59,7 @@ export const updateGradeController = async (req, res) => {
         if (existingGrade) {
             return res.status(409).send({
                 success: false,
-                message: "Grade already exist"
+                message: "Grade already exists"
             })
         }
         const grade = await gradeModel.findByIdAndUpdate(id, { name, slug: slugify(name) }, { new: true })
@@ -85,7 +85,7 @@ export const getAllGradesController = async (req, res) => {
             .sort({ createdAt: -1 })
         res.status(200).send({
             success: true,
-            message: "Grade List fetched successfully",
+            message: "Grades List fetched successfully",
             grade,
         })
     } catch (error) {
@@ -111,7 +111,7 @@ export const getSingleGradeController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while fetching grade",
+            message: "Error fetching grade",
             error
         })
     }

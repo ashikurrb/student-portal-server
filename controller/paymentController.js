@@ -132,7 +132,7 @@ export const deletePaymentController = async (req, res) => {
         res.status(500).send({
             success: false,
             error,
-            message: "Error deleting payment status"
+            message: "Error while deleting payment status"
         })
     }
 }

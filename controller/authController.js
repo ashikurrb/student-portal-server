@@ -21,22 +21,22 @@ export const registerController = async (req, res) => {
         const { name, email, password, phone, answer, grade } = req.body;
         //validation
         if (!name) {
-            return res.send({ message: "Name is Required" })
+            return res.send({ message: "Name is required" })
         }
         if (!email) {
-            return res.send({ message: "Email is Required" })
+            return res.send({ message: "Email is required" })
         }
         if (!phone) {
-            return res.send({ message: "Phone Number is Required" })
+            return res.send({ message: "Phone number is required" })
         }
         if (!password) {
-            return res.send({ message: "Password is Required" })
+            return res.send({ message: "Password is required" })
         }
         if (!answer) {
-            return res.send({ message: "Answer  is Required" })
+            return res.send({ message: "Answer is required" })
         }
         if (!grade) {
-            return res.send({ message: "Grade  is Required" })
+            return res.send({ message: "Grade is required" })
         }
 
         // Find user by email or phone
@@ -57,7 +57,7 @@ export const registerController = async (req, res) => {
             } else if (existingUser.phone === phone) {
                 return res.status(200).send({
                     success: false,
-                    message: "Phone number is already exist"
+                    message: "Phone number already exists"
                 });
             }
         }
@@ -65,10 +65,10 @@ export const registerController = async (req, res) => {
         //register User
         //condition 
         if (phone && phone.length < 11) {
-            return res.json({ message: "Mobile number must be 11 digit" })
+            return res.json({ message: "Mobile number must be 11 digits" })
         }
         if (password && password.length < 6) {
-            return res.json({ message: "Password must be 6 digit" })
+            return res.json({ message: "Password must be at least 6 characters long" })
         }
         //encrypting password
         const hashedPassword = password ? await hashPassword(password) : undefined;
@@ -86,7 +86,7 @@ export const registerController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while registration",
+            message: "Error during registration",
             error
         })
     }
@@ -101,7 +101,7 @@ export const loginController = async (req, res) => {
         if (!email && !phone || !password) {
             return res.status(404).send({
                 success: false,
-                message: "Invalid Credential",
+                message: "Invalid credential",
                 error
             })
         }
@@ -127,7 +127,7 @@ export const loginController = async (req, res) => {
         if (!match) {
             return res.status(200).send({
                 success: false,
-                message: "Invalid Password",
+                message: "Invalid password",
             })
         }
 
@@ -150,7 +150,7 @@ export const loginController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error in Login",
+            message: "Error during Login",
             error
         })
     }
@@ -175,14 +175,14 @@ export const forgotPasswordController = async (req, res) => {
         if (!user) {
             return res.status(404).send({
                 success: false,
-                message: "Email or answer are not matched",
+                message: "Email or answer does not match",
                 error
             })
         }
 
         //condition 
         if (newPassword && newPassword.length < 6) {
-            return res.json({ message: "Password must be 6 digit" })
+            return res.json({ message: "Password must be at least 6 characters long" })
         }
         //encrypting password
         const hashed = newPassword ? await hashPassword(newPassword) : undefined;
@@ -283,7 +283,7 @@ export const updateUserProfileController = async (req, res) => {
             return res.status(400).json({ error: "Password is required to update profile" });
         }
         if (newPassword && newPassword.length < 6) {
-            return res.json({ error: "Password must be 6 digits" });
+            return res.json({ error: "Password must be at least 6 characters long" });
         }
         if (newPassword || oldPassword) {
             if (!oldPassword) {
@@ -387,7 +387,7 @@ export const deleteUserController = async (req, res) => {
         ]);
         res.status(200).send({
             success: true,
-            message: "User & their data deleted successfully",
+            message: "User and their data have been deleted successfully",
         })
     } catch (error) {
         console.log(error);

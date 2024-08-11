@@ -126,7 +126,7 @@ export const deleteResultController = async (req, res) => {
         res.status(500).send({
             success: false,
             error,
-            message: "Error deleting result"
+            message: "Error while deleting result"
         })
     }
 }
