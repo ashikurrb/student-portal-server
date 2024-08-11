@@ -116,9 +116,9 @@ export const loginController = async (req, res) => {
 
         //Login validation
         if (!user) {
-            return res.status(404).send({
+            return res.status(404).json({
                 success: false,
-                message: 'No user found. Please register',
+                error: 'No user found. Please register.',
             })
         }
 
@@ -278,12 +278,11 @@ export const updateUserProfileController = async (req, res) => {
     try {
         const { avatar, name, phone, oldPassword, newPassword, answer } = req.body;
         const user = await userModel.findById(req.user._id);
-
         if (!name) {
-            return res.send({ message: "Name is Required" });
+            return res.send({ message: "Name is required" });
         }
         if (!phone) {
-            return res.send({ message: "Phone Number is Required" });
+            return res.send({ message: "Phone number is required" });
         }
         if (newPassword && newPassword.length < 6) {
             return res.json({ error: "Password must be 6 digits" });

@@ -6,26 +6,26 @@ export const createPaymentController = async (req, res) => {
     try {
         const { remark, trxId, method, amount, paymentDate, user, grade } = req.fields;
         //validation
-        if (!remark) {
-            return res.status(400).send({ message: "Remark is Required" });
-        }
-        if (!trxId) {
-            return res.status(400).send({ message: "Transaction ID is Required" });
-        }
-        if (!method) {
-            return res.status(400).send({ message: "Method is Required" });
-        }
-        if (!amount) {
-            return res.status(400).send({ message: "Amount is Required" });
-        }
-        if (!paymentDate) {
-            return res.status(400).send({ message: "Payment Date is Required" });
+        if (!grade) {
+            return res.status(400).send({ message: "Grade is required" });
         }
         if (!user) {
-            return res.status(400).send({ message: "User is Required" });
+            return res.status(400).send({ message: "User is required" });
         }
-        if (!grade) {
-            return res.status(400).send({ message: "Grade is Required" });
+        if (!remark) {
+            return res.status(400).send({ message: "Remark is required" });
+        }
+        if (!trxId) {
+            return res.status(400).send({ message: "Transaction ID is required" });
+        }
+        if (!method) {
+            return res.status(400).send({ message: "Method is required" });
+        }
+        if (!amount) {
+            return res.status(400).send({ message: "Amount is required" });
+        }
+        if (!paymentDate) {
+            return res.status(400).send({ message: "Payment Date is required" });
         }
 
         const payment = new paymentModel({ ...req.fields });
@@ -87,25 +87,25 @@ export const updatePaymentController = async (req, res) => {
         const { remark, trxId, method, amount, paymentDate } = req.fields;
         //validation
         if (!remark) {
-            return res.status(400).send({ message: "Remark is Required" });
+            return res.status(400).send({ message: "Remark is required" });
         }
         if (!trxId) {
-            return res.status(400).send({ message: "Transaction ID is Required" });
+            return res.status(400).send({ message: "Transaction ID is required" });
         }
         if (!method) {
-            return res.status(400).send({ message: "Payment Method is Required" });
+            return res.status(400).send({ message: "Payment Method is required" });
         }
         if (!amount) {
-            return res.status(400).send({ message: "Amount is Required" });
+            return res.status(400).send({ message: "Amount is required" });
         }
         if (!paymentDate) {
-            return res.status(400).send({ message: "Date is Required" });
+            return res.status(400).send({ message: "Date is required" });
         }
 
         const updatedPayment = await paymentModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
         res.status(201).send({
             success: true,
-            message: "Payment updated successfully",
+            message: "Payment status updated successfully",
             updatedPayment,
         });
     } catch (error) {

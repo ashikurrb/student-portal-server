@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Configuration
+// Configuration (use in grade for deleting user's avatar while deleting grade )
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -25,8 +25,8 @@ export const createGradeController = async (req, res) => {
         }
         const existingGrade = await gradeModel.findOne({ name })
         if (existingGrade) {
-            return res.status(200).send({
-                success: true,
+            return res.status(409).send({
+                success: false,
                 message: "Grade already exist"
             })
         }
@@ -41,7 +41,7 @@ export const createGradeController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while creating grade",
+            message: "Error creating grade",
             error
         })
     }
@@ -54,6 +54,13 @@ export const updateGradeController = async (req, res) => {
         const { id } = req.params;
         if (!name) {
             return res.status(401).send({ message: "Name is Required" })
+        }
+        const existingGrade = await gradeModel.findOne({ name })
+        if (existingGrade) {
+            return res.status(409).send({
+                success: false,
+                message: "Grade already exist"
+            })
         }
         const grade = await gradeModel.findByIdAndUpdate(id, { name, slug: slugify(name) }, { new: true })
         res.status(200).send({

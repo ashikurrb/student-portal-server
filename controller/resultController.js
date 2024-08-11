@@ -6,23 +6,23 @@ export const createResultController = async (req, res) => {
     try {
         const { type, subject, marks, examDate, user, grade } = req.fields;
         //validation
-        if (!type) {
-            return res.status(400).send({ message: "Exam Type is Required" });
-        }
-        if (!subject) {
-            return res.status(400).send({ message: "Subject is Required" });
-        }
-        if (!marks) {
-            return res.status(400).send({ message: "Marks is Required" });
-        }
-        if (!examDate) {
-            return res.status(400).send({ message: "Date is Required" });
+        if (!grade) {
+            return res.status(400).send({ message: "Grade is required" });
         }
         if (!user) {
-            return res.status(400).send({ message: "User is Required" });
+            return res.status(400).send({ message: "User is required" });
         }
-        if (!grade) {
-            return res.status(400).send({ message: "Grade is Required" });
+        if (!type) {
+            return res.status(400).send({ message: "Exam type is required" });
+        }
+        if (!subject) {
+            return res.status(400).send({ message: "Subject is required" });
+        }
+        if (!examDate) {
+            return res.status(400).send({ message: "Date is required" });
+        }
+        if (!marks) {
+            return res.status(400).send({ message: "Marks is required" });
         }
 
         const results = new resultModel({ ...req.fields });
@@ -84,16 +84,16 @@ export const updateResultController = async (req, res) => {
         const { type, subject, marks, examDate } = req.fields;
         //validation
         if (!type) {
-            return res.status(400).send({ message: "Exam Type is Required" });
+            return res.status(400).send({ message: "Exam type is required" });
         }
         if (!subject) {
-            return res.status(400).send({ message: "Subject is Required" });
+            return res.status(400).send({ message: "Subject is required" });
         }
         if (!marks) {
-            return res.status(400).send({ message: "Marks is Required" });
+            return res.status(400).send({ message: "Marks is required" });
         }
         if (!examDate) {
-            return res.status(400).send({ message: "Date is Required" });
+            return res.status(400).send({ message: "Date is required" });
         }
 
         const updatedResult = await resultModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
@@ -126,7 +126,7 @@ export const deleteResultController = async (req, res) => {
         res.status(500).send({
             success: false,
             error,
-            message: "Error deleting Result"
+            message: "Error deleting result"
         })
     }
 }

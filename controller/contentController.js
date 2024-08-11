@@ -5,20 +5,20 @@ export const createContentController = async (req, res) => {
     try {
         const { subject, remark, type, contentLink, grade } = req.fields;
         //validation
-        if (!subject) {
-            return res.status(400).send({ message: "Subject is Required" });
-        }
-        if (!remark) {
-            return res.status(400).send({ message: "Remark is Required" });
+        if (!grade) {
+            return res.status(400).send({ message: "Grade is required" });
         }
         if (!type) {
-            return res.status(400).send({ message: "Type is Required" });
+            return res.status(400).send({ message: "Type is required" });
+        }
+        if (!subject) {
+            return res.status(400).send({ message: "Subject is required" });
+        }
+        if (!remark) {
+            return res.status(400).send({ message: "Remark is required" });
         }
         if (!contentLink) {
-            return res.status(400).send({ message: "Content Link is Required" });
-        }
-        if (!grade) {
-            return res.status(400).send({ message: "Grade is Required" });
+            return res.status(400).send({ message: "Content Link is required" });
         }
 
         const content = new contentModel({ ...req.fields });
@@ -75,7 +75,7 @@ export const getAllContentController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error while fetching all contents",
+            message: "Error fetching all contents",
             error
         });
     }
@@ -87,16 +87,16 @@ export const updateContentController = async (req, res) => {
         const { subject, remark, type, contentLink } = req.fields;
         //validation
         if (!subject) {
-            return res.status(400).send({ message: "Subject is Required" });
+            return res.status(400).send({ message: "Subject is required" });
         }
         if (!remark) {
-            return res.status(400).send({ message: "Remark is Required" });
+            return res.status(400).send({ message: "Remark is required" });
         }
         if (!type) {
-            return res.status(400).send({ message: "Type is Required" });
+            return res.status(400).send({ message: "Type is required" });
         }
         if (!contentLink) {
-            return res.status(400).send({ message: "Content Link is Required" });
+            return res.status(400).send({ message: "Content Link is required" });
         }
 
         const updatedContent = await contentModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
