@@ -118,7 +118,7 @@ export const loginController = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                error: 'No user found. Please register.',
+                error: 'No user found',
             })
         }
 
