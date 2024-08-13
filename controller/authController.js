@@ -160,48 +160,51 @@ export const loginController = async (req, res) => {
 export const forgotPasswordController = async (req, res) => {
     try {
         const { email, answer, newPassword } = req.body;
+
+        // Input validation
         if (!email) {
-            res.status(400).send({ message: "Email is Required" })
+            return res.status(400).send({ success: false, message: "Email is required" });
         }
         if (!answer) {
-            res.status(400).send({ message: "Answer is Required" })
+            return res.status(400).send({ success: false, message: "Answer is required" });
         }
         if (!newPassword) {
-            res.status(400).send({ message: "New Password is Required" })
+            return res.status(400).send({ success: false, message: "New password is required" });
         }
-        //check
-        const user = await userModel.findOne({ email, answer })
-        //validation
+        if (newPassword.length < 6) {
+            return res.status(400).send({ success: false, message: "Password must be at least 6 characters long" });
+        }
+
+        // Check user existence
+        const user = await userModel.findOne({ email, answer });
         if (!user) {
             return res.status(404).send({
                 success: false,
-                message: "Email or answer does not match",
-                error
-            })
+                message: "Invalid email or answer"
+            });
         }
 
-        //condition 
-        if (newPassword && newPassword.length < 6) {
-            return res.json({ message: "Password must be at least 6 characters long" })
-        }
-        //encrypting password
-        const hashed = newPassword ? await hashPassword(newPassword) : undefined;
+        // Encrypting the new password
+        const hashedPassword = await hashPassword(newPassword);
 
-        await userModel.findByIdAndUpdate(user._id, { password: hashed })
+        // Update user's password
+        await userModel.findByIdAndUpdate(user._id, { password: hashedPassword });
+
         res.status(200).send({
             success: true,
             message: "Password reset successful!"
-        })
+        });
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).send({
             success: false,
-            message: "Error in Forgot password",
-            error
-        })
+            message: "Error resetting password",
+            error: error.message || "Internal Server Error"
+        });
     }
 }
+
 
 //get logged-in user profile
 export const getProfileDataController = async (req, res) => {
