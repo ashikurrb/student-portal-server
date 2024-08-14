@@ -295,7 +295,7 @@ export const updateUserProfileController = async (req, res) => {
 
             const isMatch = await bcrypt.compare(oldPassword, user.password);
             if (!isMatch) {
-                return res.status(400).json({ error: "Password is incorrect" });
+                return res.status(400).json({ error: "Wrong password" });
             }
         }
 
