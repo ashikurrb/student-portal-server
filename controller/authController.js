@@ -350,10 +350,15 @@ export const uploadUserAvatarController = async (req, res) => {
 
         // Photo Upload to Cloudinary
         const result = await cloudinary.uploader.upload(file.path, {
-            folder: '5points-student-portal/avatar' // Specify the folder here
+            folder: '5points-student-portal/avatar',
+            // crop: 'thumb',
+            // gravity: 'face',
+            // width: 500,
+            // height: 500,
+            // fetch_format: 'auto',
+            // quality: 'auto'
         });
-        console.log('Cloudinary Upload Result:', result); // Log result for debugging
-
+        console.log('Cloudinary Upload Result:', result);
         // Update the user's photo URL in the database
         user.avatar = result.secure_url;
         await user.save();
