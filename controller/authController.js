@@ -156,6 +156,7 @@ export const loginController = async (req, res) => {
     }
 }
 
+
 //forgot password controller 
 export const forgotPasswordController = async (req, res) => {
     try {
@@ -334,7 +335,6 @@ export const uploadUserAvatarController = async (req, res) => {
     }
 
     try {
-
         //find the user by id first
         const userId = req.user._id;
         const user = await userModel.findById(userId);

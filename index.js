@@ -7,6 +7,7 @@ import gradeRoutes from "./routes/gradeRoute.js"
 import resultRoutes from "./routes/resultRoute.js"
 import paymentRoutes from "./routes/paymentRoute.js"
 import contentRoutes from "./routes/contentRoute.js"
+import noticeRoutes from "./routes/noticeRoute.js"
 import cors from 'cors'
 import formidable from 'express-formidable';
 
@@ -25,6 +26,8 @@ app.use(cors())
 app.use(express.json())
 app.use(morgan("dev"))
 app.use('/api/v1/auth/upload-avatar', formidable())
+app.use('/api/v1/notice/create-notice', formidable())
+app.use('/api/v1/notice/update-notice/:id', formidable())
 
 //routes
 app.use('/api/v1/auth', authRoutes)
@@ -32,6 +35,7 @@ app.use('/api/v1/grade', gradeRoutes)
 app.use('/api/v1/result', resultRoutes)
 app.use('/api/v1/payment', paymentRoutes)
 app.use('/api/v1/content', contentRoutes)
+app.use('/api/v1/notice', noticeRoutes)
 
 
 //rest API

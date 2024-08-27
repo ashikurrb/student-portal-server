@@ -97,7 +97,7 @@ export const updateResultController = async (req, res) => {
         }
 
         const updatedResult = await resultModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
-        res.status(201).send({
+        res.status(200).send({
             success: true,
             message: "Result updated successfully",
             updatedResult,
