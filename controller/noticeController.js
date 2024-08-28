@@ -1,6 +1,6 @@
 import noticeModel from "../models/noticeModel.js";
 import userModel from "../models/userModel.js";
-import cloudinary from 'cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -33,7 +33,9 @@ export const createNoticeController = async (req, res) => {
         if (file) {
             try {
                 const result = await cloudinary.uploader.upload(file.path, {
-                    folder: '5points-student-portal/notices'
+                    folder: '5points-student-portal/notices',
+                    use_filename: true,
+                    unique_filename: false
                 });
                 noticeData.noticeImg = result.secure_url;
             } catch (uploadError) {
@@ -84,6 +86,7 @@ export const getGradeNoticeController = async (req, res) => {
     try {
         // Fetch the logged-in user's data using the user ID
         const user = await userModel.findById(req.user);
+
         // Get the grade of the logged-in user
         const userGrade = user.grade;
 
@@ -128,7 +131,7 @@ export const updateNoticeController = async (req, res) => {
         // If old image exists, delete it
         if (notice.noticeImg) {
             const publicId = notice.noticeImg.split('/').pop().split('.')[0];
-            await cloudinary.uploader.destroy(`${publicId}`);
+            await cloudinary.uploader.destroy(`5points-student-portal/notices/${publicId}`);
         }
 
         // Initialize noticeData object
@@ -172,7 +175,7 @@ export const deleteNoticeController = async (req, res) => {
          // If old image exists, delete it
          if (notice.noticeImg) {
             const publicId = notice.noticeImg.split('/').pop().split('.')[0];
-            await cloudinary.uploader.destroy(`${publicId}`);
+            await cloudinary.uploader.destroy(`5points-student-portal/notices/${publicId}`);
         }
         res.status(200).send({
             success: true,
