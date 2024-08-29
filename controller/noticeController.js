@@ -98,7 +98,7 @@ export const getGradeNoticeController = async (req, res) => {
             ]
         })
             .populate("grade")
-            .sort({ createdAt: -1 });
+            .sort({ updatedAt: -1 });
         res.json(notices);
     } catch (error) {
         console.log(error);
