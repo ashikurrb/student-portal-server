@@ -12,7 +12,7 @@ const router = express.Router();
 router.post('/create-notice', requireSignIn, isAdmin, formidable(), createNoticeController);
 
 //get all notice
-router.get('/all-notices', getAllNoticeController);
+router.get('/all-notices',requireSignIn, getAllNoticeController);
 
 //get notice by grade id
 router.get('/get-notice', requireSignIn, getGradeNoticeController);
