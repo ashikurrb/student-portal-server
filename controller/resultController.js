@@ -48,6 +48,8 @@ export const getResultController = async (req, res) => {
     try {
         const result = await resultModel
             .find({ user: req.user._id })
+            .populate("grade")
+            .sort({ createdAt: -1 });
         res.json(result);
     } catch (error) {
         console.log(error);

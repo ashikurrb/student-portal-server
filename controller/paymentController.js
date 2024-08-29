@@ -51,6 +51,9 @@ export const getPaymentController = async (req, res) => {
     try {
         const payment = await paymentModel
             .find({ user: req.user._id })
+            .populate("user")
+            .populate("grade")
+            .sort({ createdAt: -1 });
         res.json(payment);
     } catch (error) {
         console.log(error);
