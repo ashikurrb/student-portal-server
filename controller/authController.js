@@ -18,7 +18,7 @@ cloudinary.config({
 
 export const registerController = async (req, res) => {
     try {
-        const { name, email, password, phone, answer, grade } = req.body;
+        const { name, email, password, phone, answer, grade } = req.fields;
         //validation
         if (!name) {
             return res.send({ message: "Name is required" })

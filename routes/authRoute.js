@@ -9,7 +9,7 @@ const router = express.Router();
 //routing
 
 //REGISTER || Method: POST
-router.post('/register', registerController)
+router.post('/register',formidable(), registerController)
 
 //Login || Method: POST
 router.post('/login', loginController)
