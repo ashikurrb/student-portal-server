@@ -25,7 +25,7 @@ const app = express();
 app.use(cors())
 app.use(express.json())
 app.use(morgan("dev"))
-app.use('/api/v1/auth/upload-avatar', formidable())
+app.use('/api/v1/auth/update-profile', formidable())
 app.use('/api/v1/notice/create-notice', formidable())
 app.use('/api/v1/notice/update-notice/:id', formidable())
 

@@ -280,33 +280,66 @@ export const updateUserGradeController = async (req, res) => {
 //update user profile
 export const updateUserProfileController = async (req, res) => {
     try {
-        const { avatar, name, phone, oldPassword, newPassword, answer } = req.body;
-        const user = await userModel.findById(req.user._id);
+        const { avatar, name, phone, oldPassword, newPassword, answer } = req.fields;
+        const file = req.files.photo;
+
+        // Find the user by ID
+        const userId = req.user._id;
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+
+        // Check if the phone number already exists for another user
+        if (phone) {
+            const existingUser = await userModel.findOne({ phone });
+            if (existingUser && existingUser._id.toString() !== req.user._id.toString()) {
+                return res.status(400).json({ error: "Phone number already exists" });
+            }
+        }
+
         // Check if oldPassword is provided when updating profile details or password
         if ((name || phone || avatar || answer) && !oldPassword) {
             return res.status(400).json({ error: "Password is required to update profile" });
         }
+
         if (newPassword && newPassword.length < 6) {
             return res.json({ error: "Password must be at least 6 characters long" });
         }
+
         if (newPassword || oldPassword) {
             if (!oldPassword) {
                 return res.status(400).json({ error: "Password is required to set a new password" });
             }
-
             const isMatch = await bcrypt.compare(oldPassword, user.password);
             if (!isMatch) {
-                return res.status(400).json({ error: "Wrong password" });
+                return res.status(400).json({ error: "Incorrect password" });
             }
         }
 
-        const hashedPassword = newPassword ? await hashPassword(newPassword) : user.password;
+        // Conditional photo upload
+        if (file) {
+            // If the user has an old avatar, delete it first
+            if (user.avatar) {
+                const publicId = user.avatar.split('/').pop().split('.')[0];
+                await cloudinary.uploader.destroy(`5points-student-portal/avatar/${publicId}`);
+            }
 
+            // Photo Upload to Cloudinary
+            const result = await cloudinary.uploader.upload(file.path, {
+                folder: '5points-student-portal/avatar',
+            });
+            console.log('Cloudinary Upload Result:', result);
+            // Update the user's photo URL in the database
+            user.avatar = result.secure_url;
+        }
+
+        const hashedPassword = newPassword ? await hashPassword(newPassword) : user.password;
         const updatedUser = await userModel.findByIdAndUpdate(req.user._id, {
             name: name || user.name,
             phone: phone || user.phone,
             answer: answer || user.answer,
-            avatar: avatar || user.avatar,
+            avatar: user.avatar,
             password: hashedPassword
         }, { new: true }).populate("grade");
 
@@ -325,54 +358,6 @@ export const updateUserProfileController = async (req, res) => {
         });
     }
 };
-
-//upload/update user photo with cloudinary
-export const uploadUserAvatarController = async (req, res) => {
-    console.log('Request Files:', req.files);
-    const file = req.files.photo;
-    if (!file) {
-        return res.status(400).send({ message: 'No file uploaded' });
-    }
-
-    try {
-        //find the user by id first
-        const userId = req.user._id;
-        const user = await userModel.findById(userId);
-        if (!user) {
-            return res.status(404).send({ message: 'User not found' });
-        }
-
-        //if user have old avatar, delete it first
-        if (user.avatar) {
-            const publicId = user.avatar.split('/').pop().split('.')[0];
-            await cloudinary.uploader.destroy(`5points-student-portal/avatar/${publicId}`);
-        }
-
-        // Photo Upload to Cloudinary
-        const result = await cloudinary.uploader.upload(file.path, {
-            folder: '5points-student-portal/avatar',
-            // crop: 'thumb',
-            // gravity: 'face',
-            // width: 500,
-            // height: 500,
-            // fetch_format: 'auto',
-            // quality: 'auto'
-        });
-        console.log('Cloudinary Upload Result:', result);
-        // Update the user's photo URL in the database
-        user.avatar = result.secure_url;
-        await user.save();
-
-        return res.status(200).send({
-            message: 'Photo uploaded and user updated successfully',
-            url: result.secure_url,
-        });
-    } catch (error) {
-        console.error('Cloudinary Upload Error:', error); // Log error details
-        return res.status(500).send({ message: 'Upload to Cloudinary failed', error });
-    }
-};
-
 
 //delete user controller
 export const deleteUserController = async (req, res) => {
