@@ -9,13 +9,13 @@ const router = express.Router();
 //routing
 
 //REGISTER || Method: POST
-router.post('/register',formidable(), registerController)
+router.post('/register', formidable(), registerController)
 
 //Login || Method: POST
-router.post('/login', loginController)
+router.post('/login', formidable(), loginController)
 
 //Forgot Password || Method: POST
-router.post('/forgot-password',formidable(), forgotPasswordController)
+router.post('/forgot-password', formidable(), forgotPasswordController)
 
 //all user list
 router.get("/all-users", requireSignIn, isAdmin, getAllUsersController)

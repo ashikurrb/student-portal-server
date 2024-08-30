@@ -95,7 +95,7 @@ export const registerController = async (req, res) => {
 //Login : POST
 export const loginController = async (req, res) => {
     try {
-        const { email, password, phone } = req.body;
+        const { email, password, phone } = req.fields;
 
         //validation
         if (!email && !phone || !password) {
