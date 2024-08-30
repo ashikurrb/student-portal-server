@@ -15,7 +15,7 @@ router.post('/register', registerController)
 router.post('/login', loginController)
 
 //Forgot Password || Method: POST
-router.post('/forgot-password', forgotPasswordController)
+router.post('/forgot-password',formidable(), forgotPasswordController)
 
 //all user list
 router.get("/all-users", requireSignIn, isAdmin, getAllUsersController)
@@ -27,7 +27,7 @@ router.get("/profile", requireSignIn, getProfileDataController)
 router.put('/user-grade/:id', requireSignIn, isAdmin, formidable(), updateUserGradeController)
 
 //update user profile
-router.put('/update-profile', requireSignIn, updateUserProfileController)
+router.put('/update-profile', requireSignIn, formidable(), updateUserProfileController)
 
 //delete user by admin
 router.delete('/delete-user/:id', requireSignIn, isAdmin, deleteUserController)
