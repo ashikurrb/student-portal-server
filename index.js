@@ -9,8 +9,6 @@ import paymentRoutes from "./routes/paymentRoute.js"
 import contentRoutes from "./routes/contentRoute.js"
 import noticeRoutes from "./routes/noticeRoute.js"
 import cors from 'cors'
-import formidable from 'express-formidable';
-
 
 //dotenv config
 dotenv.config();
@@ -25,9 +23,6 @@ const app = express();
 app.use(cors())
 app.use(express.json())
 app.use(morgan("dev"))
-app.use('/api/v1/auth/update-profile', formidable())
-app.use('/api/v1/notice/create-notice', formidable())
-app.use('/api/v1/notice/update-notice/:id', formidable())
 
 //routes
 app.use('/api/v1/auth', authRoutes)

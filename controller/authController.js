@@ -156,7 +156,6 @@ export const loginController = async (req, res) => {
     }
 }
 
-
 //forgot password controller 
 export const forgotPasswordController = async (req, res) => {
     try {
