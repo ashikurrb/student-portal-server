@@ -40,7 +40,7 @@ export const createNoticeController = async (req, res) => {
                 noticeData.noticeImg = result.secure_url;
             } catch (uploadError) {
                 console.error('Cloudinary Upload Error:', uploadError);
-                return res.status(500).send({ message: 'Upload to Cloudinary failed', error: uploadError.message });
+                return res.status(500).send({ message: 'Upload failed', error: uploadError.message });
             }
         }
 
@@ -146,7 +146,7 @@ export const updateNoticeController = async (req, res) => {
                 noticeData.noticeImg = result.secure_url;
             } catch (uploadError) {
                 console.error('Cloudinary Upload Error:', uploadError);
-                return res.status(500).send({ message: 'Upload to Cloudinary failed', error: uploadError.message });
+                return res.status(500).send({ message: 'Upload failed', error: uploadError.message });
             }
         }
 
