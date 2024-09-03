@@ -324,13 +324,18 @@ export const updateUserProfileController = async (req, res) => {
                 await cloudinary.uploader.destroy(`5points-student-portal/avatar/${publicId}`);
             }
 
-            // Photo Upload to Cloudinary
-            const result = await cloudinary.uploader.upload(file.path, {
-                folder: '5points-student-portal/avatar',
-            });
-            console.log('Cloudinary Upload Result:', result);
-            // Update the user's photo URL in the database
-            user.avatar = result.secure_url;
+            try {
+                // Photo Upload to Cloudinary
+                const result = await cloudinary.uploader.upload(file.path, {
+                    folder: '5points-student-portal/avatar',
+                });
+                // Update the user's photo URL in the database
+                user.avatar = result.secure_url;
+
+            } catch (uploadError) {
+                console.error('Cloudinary Upload Error:', uploadError);
+                return res.status(500).send({ message: 'Upload failed', error: uploadError.message });
+            }
         }
 
         const hashedPassword = newPassword ? await hashPassword(newPassword) : user.password;

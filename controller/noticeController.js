@@ -128,22 +128,24 @@ export const updateNoticeController = async (req, res) => {
         // Fetch existing notice
         const notice = await noticeModel.findById(noticeId);
 
-        // If old image exists, delete it
-        if (notice.noticeImg) {
-            const publicId = notice.noticeImg.split('/').pop().split('.')[0];
-            await cloudinary.uploader.destroy(`5points-student-portal/notices/${publicId}`);
-        }
-
         // Initialize noticeData object
         const noticeData = { title, noticeInfo, grade };
 
-        // Handle image upload if a file is provided
+        //Conditional photo upload
         if (file) {
+            // If old image exists, delete it
+            if (notice.noticeImg) {
+                const publicId = notice.noticeImg.split('/').pop().split('.')[0];
+                await cloudinary.uploader.destroy(`5points-student-portal/notices/${publicId}`);
+            }
+
             try {
                 const result = await cloudinary.uploader.upload(file.path, {
                     folder: '5points-student-portal/notices'
                 });
+                //save photo url to database
                 noticeData.noticeImg = result.secure_url;
+
             } catch (uploadError) {
                 console.error('Cloudinary Upload Error:', uploadError);
                 return res.status(500).send({ message: 'Upload failed', error: uploadError.message });
@@ -172,8 +174,8 @@ export const updateNoticeController = async (req, res) => {
 export const deleteNoticeController = async (req, res) => {
     try {
         const notice = await noticeModel.findByIdAndDelete(req.params.id);
-         // If old image exists, delete it
-         if (notice.noticeImg) {
+        // If old image exists, delete it
+        if (notice.noticeImg) {
             const publicId = notice.noticeImg.split('/').pop().split('.')[0];
             await cloudinary.uploader.destroy(`5points-student-portal/notices/${publicId}`);
         }
