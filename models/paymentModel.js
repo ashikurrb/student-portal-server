@@ -21,7 +21,7 @@ const paymentSchema = new mongoose.Schema({
         require: true,
     },
     paymentDate: {
-        type: String,
+        type: Date,
         require: true,
     },
     user: {

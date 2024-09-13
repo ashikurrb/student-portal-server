@@ -16,7 +16,7 @@ const resultSchema = new mongoose.Schema({
         require: true,
     },
     examDate: {
-        type: String,
+        type: Date,
         require: true,
     },
     user: {
