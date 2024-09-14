@@ -53,7 +53,7 @@ export const updateGradeController = async (req, res) => {
         const { name } = req.fields;
         const { id } = req.params;
         if (!name) {
-            return res.status(401).send({ message: "Name is Required" })
+            return res.status(401).send({ message: "Name is required" })
         }
         const existingGrade = await gradeModel.findOne({ slug: slugify(name) })
         if (existingGrade) {
