@@ -214,7 +214,7 @@ export const forgotPasswordController = async (req, res) => {
 
         res.status(200).send({
             success: true,
-            message: "Password reset successful!"
+            message: "Password reset successfully!"
         });
 
     } catch (error) {
