@@ -6,6 +6,7 @@ import JWT from 'jsonwebtoken'
 import { v2 as cloudinary } from 'cloudinary';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
+import { CourierClient } from '@trycourier/courier';
 
 dotenv.config();
 
@@ -15,6 +16,9 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
+
+//courier mail token
+const courier = new CourierClient({ authorizationToken: process.env.COURIER_AUTH_TOKEN });
 
 export const registerController = async (req, res) => {
     try {
@@ -75,7 +79,25 @@ export const registerController = async (req, res) => {
 
         //save
         const user = await new userModel({ name, email, phone, answer, password: hashedPassword, grade }).save()
-        //password validation
+
+        // Send registration confirmation email via Courier
+        const { requestId } = await courier.send({
+            message: {
+                to: {
+                    data: { name },
+                    email
+                },
+                template: "757R9DGS774B6KHWBG7TZ2MM8EX8",
+                data: {
+                    name: "name",
+                },
+                routing: {
+                    method: "single",
+                    channels: ["email"],
+                },
+            },
+        });
+        
         res.status(201).send({
             success: true,
             message: "Registration successful! Please login",
