@@ -100,7 +100,7 @@ export const registerController = async (req, res) => {
         
         res.status(201).send({
             success: true,
-            message: "Registration successful! Please login",
+            message: "Registration successful!",
             user
         })
 
