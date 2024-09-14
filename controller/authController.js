@@ -87,7 +87,7 @@ export const registerController = async (req, res) => {
                     data: { name },
                     email
                 },
-                template: "757R9DGS774B6KHWBG7TZ2MM8EX8",
+                template: process.env.COURIER_TEMPLATE_KEY,
                 data: {
                     name: "name",
                 },
@@ -406,14 +406,14 @@ export const deleteUserController = async (req, res) => {
         ]);
         res.status(200).send({
             success: true,
-            message: "User and their data have been deleted successfully",
+            message: "User and their data deleted successfully",
         })
     } catch (error) {
         console.log(error);
         res.status(500).send({
             success: false,
             error,
-            message: "Error while deleting user"
+            message: "Error deleting user"
         })
     }
 }
