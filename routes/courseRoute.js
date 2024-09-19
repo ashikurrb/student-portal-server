@@ -1,7 +1,7 @@
 import express from "express"
 import formidable from "express-formidable";
 import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js'
-import { createCourseController, deleteCourseController, getAllCoursesController, getCourseController, updateCourseController } from "../controller/courseController.js";
+import { createCourseController, deleteCourseController, getAllCoursesController, getCourseController, getGradeCourseController, updateCourseController } from "../controller/courseController.js";
 
 //router object
 const router = express.Router();
@@ -14,6 +14,9 @@ router.get('/all-courses', getAllCoursesController);
 
 //get single course
 router.get('/get-course/:slug', getCourseController);
+
+//get grade wise course
+router.get('/grade-course/:slug', getGradeCourseController);
 
 //update course
 router.put('/update-course/:id', requireSignIn, isAdmin, formidable(), updateCourseController);

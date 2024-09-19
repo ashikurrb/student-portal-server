@@ -1,4 +1,5 @@
 import courseModel from '../models/courseModel.js';
+import gradeModel from '../models/gradeModel.js';
 import slugify from "slugify";
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
@@ -173,6 +174,26 @@ export const updateCourseController = async (req, res) => {
             success: false,
             message: "Error updating course",
             error
+        });
+    }
+}
+
+//grade wise course
+export const getGradeCourseController = async (req, res) => {
+    try {
+        const grade = await gradeModel.findOne({ slug: req.params.slug });
+        const courses = await courseModel.find({ grade }).populate("grade")
+        res.status(200).send({
+            success: true,
+            grade,
+            courses,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            success: false,
+            message: "Error fetching grade wise courses",
+            error,
         });
     }
 }
