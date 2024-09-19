@@ -14,7 +14,7 @@ cloudinary.config({
 
 export const createCourseController = async (req, res) => {
     try {
-        const { title, grade, price, duration, startingDate, description, status } = req.fields;
+        const { title, grade, price, dateRange, description, status } = req.fields;
         const file = req.files.photo;
 
         //validation
@@ -26,11 +26,8 @@ export const createCourseController = async (req, res) => {
         if (!price) {
             return res.status(400).send({ message: "Price is required" });
         }
-        if (!duration) {
-            return res.status(400).send({ message: "Course duration is required" });
-        }
-        if (!startingDate) {
-            return res.status(400).send({ message: "Starting date is required" });
+        if (!dateRange) {
+            return res.status(400).send({ message: "Date is required" });
         }
         if (!status) {
             return res.status(400).send({ message: "Status is required" });
@@ -48,7 +45,7 @@ export const createCourseController = async (req, res) => {
         // }
 
         // Initialize course
-        const courseData = { grade, title, slug: slugify(title), price, duration, startingDate, description, status };
+        const courseData = { grade, title, slug: slugify(title), price, dateRange, description, status };
         try {
             const result = await cloudinary.uploader.upload(file.path, {
                 folder: '5points-student-portal/courses',
@@ -119,7 +116,7 @@ export const getCourseController = async (req, res) => {
 //update course
 export const updateCourseController = async (req, res) => {
     try {
-        const { title, grade, price, duration, startingDate, description, status } = req.fields;
+        const { title, grade, price, dateRange, description, status } = req.fields;
         const file = req.files.photo;
         const courseId = req.params.id;
 
@@ -135,8 +132,8 @@ export const updateCourseController = async (req, res) => {
         if (!duration) {
             return res.status(400).send({ message: "Course duration is required" });
         }
-        if (!startingDate) {
-            return res.status(400).send({ message: "Starting date is required" });
+        if (!dateRange) {
+            return res.status(400).send({ message: "Date is required" });
         }
         if (!status) {
             return res.status(400).send({ message: "Status is required" });
@@ -149,7 +146,7 @@ export const updateCourseController = async (req, res) => {
         const course = await courseModel.findById(courseId);
 
         //set update data
-        const courseData = { grade, title, slug: slugify(title), price, duration, startingDate, description, status };
+        const courseData = { grade, title, slug: slugify(title), price, dateRange, description, status };
 
         // If old image exists, delete it
         if (course.courseImg) {

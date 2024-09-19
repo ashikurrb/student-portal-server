@@ -18,11 +18,7 @@ const courseSchema = new mongoose.Schema({
         type: Number,
         require: true,
     },
-    duration: {
-        type: Number,
-        require: true,
-    },
-    startingDate: {
+    dateRange: {
         type: Date,
         require: true,
     },
