@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const courseSchema = new mongoose.Schema({
-    name: {
+    title: {
         type: String,
         require: true,
         unique: true,
@@ -30,7 +30,12 @@ const courseSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
-    banner: {
+    status:{
+        type: String,
+        default: "active",
+        enum: ["active", "inactive", "postponed"],
+    },
+    courseImg: {
         type: String,
         require: true,
     },
