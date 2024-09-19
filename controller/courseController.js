@@ -123,7 +123,7 @@ export const updateCourseController = async (req, res) => {
         //validation
         if (!title) {
             return res.status(400).send({ message: "Course name is required" });
-        } 
+        }
         if (!price) {
             return res.status(400).send({ message: "Price is required" });
         }
@@ -133,9 +133,6 @@ export const updateCourseController = async (req, res) => {
         if (!status) {
             return res.status(400).send({ message: "Status is required" });
         }
-        if (!file) {
-            return res.status(400).send({ message: "Course Image is required" });
-        }
 
         // Fetch existing notice
         const course = await courseModel.findById(courseId);
@@ -143,21 +140,23 @@ export const updateCourseController = async (req, res) => {
         //set update data
         const courseData = { title, slug: slugify(title), price, dateRange, description, status };
 
-        // If old image exists, delete it
-        if (course.courseImg) {
-            const publicId = course.courseImg.split('/').pop().split('.')[0];
-            await cloudinary.uploader.destroy(`5points-student-portal/courses/${publicId}`);
-        }
-        try {
-            const result = await cloudinary.uploader.upload(file.path, {
-                folder: '5points-student-portal/courses'
-            });
-            //save photo url to database
-            courseData.courseImg = result.secure_url;
+        if (file) {
+            // If old image exists, delete it
+            if (course.courseImg) {
+                const publicId = course.courseImg.split('/').pop().split('.')[0];
+                await cloudinary.uploader.destroy(`5points-student-portal/courses/${publicId}`);
+            }
+            try {
+                const result = await cloudinary.uploader.upload(file.path, {
+                    folder: '5points-student-portal/courses'
+                });
+                //save photo url to database
+                courseData.courseImg = result.secure_url;
 
-        } catch (uploadError) {
-            console.error('Cloudinary Upload Error:', uploadError);
-            return res.status(500).send({ message: 'Upload failed', error: uploadError.message });
+            } catch (uploadError) {
+                console.error('Cloudinary Upload Error:', uploadError);
+                return res.status(500).send({ message: 'Upload failed', error: uploadError.message });
+            }
         }
 
         // Update course
