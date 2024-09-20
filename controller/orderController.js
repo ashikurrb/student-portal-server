@@ -83,14 +83,14 @@ export const orderStatusController = async (req, res) => {
             .findByIdAndUpdate(id, { status }, { new: true })
         res.status(201).send({
             success: true,
-            message: "Status update successfully",
+            message: "Status updated successfully",
             order,
         });
     } catch (error) {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error update order status",
+            message: "Error updating order status",
             error,
         });
     }
