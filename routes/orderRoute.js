@@ -16,6 +16,6 @@ router.get('/user-order', requireSignIn, getOrdersController);
 router.get('/all-order', requireSignIn, isAdmin, getAllOrderController);
 
 //delete order
-router.delete('/delete-order', requireSignIn, isAdmin, deleteOrderController);
+router.delete('/delete-order/:id', requireSignIn, isAdmin, deleteOrderController);
 
 export default router;
