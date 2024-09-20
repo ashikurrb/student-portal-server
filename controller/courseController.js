@@ -198,6 +198,29 @@ export const getGradeCourseController = async (req, res) => {
     }
 }
 
+//get same grade related course
+export const getRelatedCourseController = async (req, res) => {
+    try {
+        const { cid, gid } = req.params;
+        const course = await courseModel.find({
+            grade: gid,
+            _id: { $ne: cid },
+        }).populate("grade")
+        res.status(200).send({
+            success: true,
+            message: "Same grade course fetched successfully",
+            course
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            success: false,
+            message: "Error fetching same grade courses",
+            error,
+        });
+    }
+}
+
 //delete course
 export const deleteCourseController = async (req, res) => {
     try {
