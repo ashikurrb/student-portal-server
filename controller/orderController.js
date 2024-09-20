@@ -63,7 +63,6 @@ export const getAllOrderController = async (req, res) => {
                 select: "-password -answer",
             })
             .sort({ createdAt: -1 });
-
         res.json(orders);
     } catch (error) {
         console.log(error);
@@ -74,6 +73,28 @@ export const getAllOrderController = async (req, res) => {
         });
     }
 };
+
+//update order status
+export const orderStatusController = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        const order = await orderModel
+            .findByIdAndUpdate(id, { status }, { new: true })
+        res.status(201).send({
+            success: true,
+            message: "Status update successfully",
+            order,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Error update order status",
+            error,
+        });
+    }
+}
 
 //delete order
 export const deleteOrderController = async (req, res) => {
