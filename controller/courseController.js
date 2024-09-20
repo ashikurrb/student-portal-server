@@ -244,4 +244,4 @@ export const deleteCourseController = async (req, res) => {
             error
         })
     }
-}
+};

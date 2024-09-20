@@ -9,6 +9,7 @@ import paymentRoutes from "./routes/paymentRoute.js"
 import contentRoutes from "./routes/contentRoute.js"
 import noticeRoutes from "./routes/noticeRoute.js"
 import courseRoutes from "./routes/courseRoute.js"
+import orderRoutes from "./routes/orderRoute.js"
 import cors from 'cors'
 
 //dotenv config
@@ -33,6 +34,7 @@ app.use('/api/v1/payment', paymentRoutes)
 app.use('/api/v1/content', contentRoutes)
 app.use('/api/v1/notice', noticeRoutes)
 app.use('/api/v1/course', courseRoutes)
+app.use('/api/v1/order', orderRoutes)
 
 
 //rest API

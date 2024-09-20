@@ -29,7 +29,7 @@ const courseSchema = new mongoose.Schema({
     status: {
         type: String,
         default: "active",
-        enum: ["Active", "Closed", "Upcoming"],
+        enum: ["Active", "Upcoming"],
     },
     courseImg: {
         type: String,
