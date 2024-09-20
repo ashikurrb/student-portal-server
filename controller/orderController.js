@@ -57,10 +57,14 @@ export const getOrdersController = async (req, res) => {
 export const getAllOrderController = async (req, res) => {
     try {
         const orders = await orderModel.find({})
-            .populate("course")
+            .populate({
+                path: "course",
+                populate: "grade"
+            })
             .populate({
                 path: "buyer",
                 select: "-password -answer",
+                populate: "grade"
             })
             .sort({ createdAt: -1 });
         res.json(orders);
