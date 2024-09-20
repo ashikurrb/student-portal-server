@@ -11,7 +11,7 @@ const orderSchema = new mongoose.Schema({
         required: true,
     },
     accNumber: {
-        type: Number,
+        type: String,
         required: true,
     },
     trxId: {
