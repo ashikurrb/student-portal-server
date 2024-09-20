@@ -263,6 +263,7 @@ export const getAllUsersController = async (req, res) => {
     try {
         const users = await userModel
             .find({})
+            .select("-password")
             .populate("grade")
             .sort({ createdAt: -1 });
         res.json(users);

@@ -53,13 +53,17 @@ export const getOrdersController = async (req, res) => {
     }
 };
 
-//get all order
+// Get all orders
 export const getAllOrderController = async (req, res) => {
     try {
         const orders = await orderModel.find({})
-            .populate("buyer")
             .populate("course")
+            .populate({
+                path: "buyer",
+                select: "-password -answer",
+            })
             .sort({ createdAt: -1 });
+
         res.json(orders);
     } catch (error) {
         console.log(error);
@@ -67,7 +71,7 @@ export const getAllOrderController = async (req, res) => {
             success: false,
             message: 'Error fetching orders',
             error
-        })
+        });
     }
 };
 
