@@ -58,7 +58,6 @@ export const createOrderController = async (req, res) => {
             },
         });
 
-
         res.status(201).send({
             success: true,
             message: "Order placed successfully",
@@ -126,6 +125,33 @@ export const orderStatusController = async (req, res) => {
         const { status } = req.body;
         const order = await orderModel
             .findByIdAndUpdate(id, { status }, { new: true })
+            .populate("buyer", "email name")
+            .populate("course", "title price dateRange");
+            
+        // Format date
+        const formattedUpdatedDate = moment(order.updatedAt).format('MMMM Do YYYY, h:mm:ss a');
+
+        // Send confirmation email via Courier
+        const { requestId } = await courier.send({
+            message: {
+                to: {
+                    email: order.buyer.email
+                },
+                template: process.env.COURIER_ORDER_STATUS_TEMPLATE_KEY,
+                data: {
+                    name: order.buyer.name,
+                    courseName: order.course.title,
+                    orderStatus: order.status,
+                    updatedDate: formattedUpdatedDate,
+                },
+                routing: {
+                    method: "single",
+                    channels: ["email"],
+                },
+            },
+        });
+
+
         res.status(201).send({
             success: true,
             message: "Status updated successfully",
