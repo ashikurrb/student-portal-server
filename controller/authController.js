@@ -87,7 +87,7 @@ export const registerController = async (req, res) => {
                     data: { name },
                     email
                 },
-                template: process.env.COURIER_TEMPLATE_KEY,
+                template: process.env.COURIER_WELCOME_TEMPLATE_KEY,
                 data: {
                     name: "name",
                 },
