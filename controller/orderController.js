@@ -1,4 +1,5 @@
 import orderModel from "../models/orderModel.js";
+import moment from 'moment';
 import dotenv from 'dotenv';
 import { CourierClient } from '@trycourier/courier';
 
@@ -28,6 +29,9 @@ export const createOrderController = async (req, res) => {
         await order.populate("course", "title price dateRange")
         await order.save();
 
+        // Format date
+        const formattedOrderDate = moment(order.createdAt).format('MMMM Do YYYY, h:mm:ss a');
+        const formattedClassDate = moment(order.course.dateRange).format('ll');
 
         // Send confirmation email via Courier
         const { requestId } = await courier.send({
@@ -35,17 +39,17 @@ export const createOrderController = async (req, res) => {
                 to: {
                     email: order.buyer.email
                 },
-                template: process.env.COURIER_ORDER_PURCHASE_TEMPLATE_KEY, 
+                template: process.env.COURIER_ORDER_PURCHASE_TEMPLATE_KEY,
                 data: {
-                    name: order.buyer.name, 
+                    name: order.buyer.name,
                     courseName: order.course.title,
                     price: order.course.price,
-                    dateRange: order.course.dateRange, 
+                    dateRange: formattedClassDate,
                     orderStatus: order.status,
                     paymentMethod: order.method,
                     accNumber: order.accNumber,
                     trxId: order.trxId,
-                    orderDate: order.createdAt,
+                    orderDate: formattedOrderDate,
                 },
                 routing: {
                     method: "single",
