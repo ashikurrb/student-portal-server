@@ -1,5 +1,11 @@
 import orderModel from "../models/orderModel.js";
+import dotenv from 'dotenv';
+import { CourierClient } from '@trycourier/courier';
 
+dotenv.config();
+
+//courier mail token
+const courier = new CourierClient({ authorizationToken: process.env.COURIER_AUTH_TOKEN });
 
 //create order
 export const createOrderController = async (req, res) => {
@@ -17,7 +23,38 @@ export const createOrderController = async (req, res) => {
         }
 
         const order = new orderModel({ ...req.fields, buyer: req.user._id });
+
+        await order.populate("buyer", "email name")
+        await order.populate("course", "title price dateRange")
         await order.save();
+
+
+        // Send confirmation email via Courier
+        const { requestId } = await courier.send({
+            message: {
+                to: {
+                    email: order.buyer.email
+                },
+                template: process.env.COURIER_ORDER_PURCHASE_TEMPLATE_KEY, 
+                data: {
+                    name: order.buyer.name, 
+                    courseName: order.course.title,
+                    price: order.course.price,
+                    dateRange: order.course.dateRange, 
+                    orderStatus: order.status,
+                    paymentMethod: order.method,
+                    accNumber: order.accNumber,
+                    trxId: order.trxId,
+                    orderDate: order.createdAt,
+                },
+                routing: {
+                    method: "single",
+                    channels: ["email"],
+                },
+            },
+        });
+
+
         res.status(201).send({
             success: true,
             message: "Order placed successfully",
