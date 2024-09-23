@@ -6,6 +6,7 @@ import paymentModel from "../models/paymentModel.js";
 import contentModel from "../models/contentModel.js";
 import noticeModel from "../models/noticeModel.js";
 import courseModel from "../models/courseModel.js";
+import orderModel from "../models/orderModel.js";
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 
@@ -142,6 +143,10 @@ export const deleteGradeController = async (req, res) => {
                 deletePromises.push(cloudinary.uploader.destroy(publicId));
             }
             deletePromises.push(userModel.deleteMany({ grade: id }));
+
+            // Find orders related to the user and delete them
+            const orders = await orderModel.find({ buyer: user._id }); 
+            deletePromises.push(orderModel.deleteMany({ buyer: { $in: orders.map(order => order.buyer) } }));
         }
 
         // Delete notice image from Cloudinary if notice exists
