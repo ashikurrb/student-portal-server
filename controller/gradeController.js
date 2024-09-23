@@ -4,6 +4,8 @@ import userModel from "../models/userModel.js";
 import resultModel from "../models/resultModel.js";
 import paymentModel from "../models/paymentModel.js";
 import contentModel from "../models/contentModel.js";
+import noticeModel from "../models/noticeModel.js";
+import courseModel from "../models/courseModel.js";
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 
@@ -148,6 +150,8 @@ export const deleteGradeController = async (req, res) => {
                 resultModel.deleteMany({ grade: id }),
                 paymentModel.deleteMany({ grade: id }),
                 contentModel.deleteMany({ grade: id }),
+                noticeModel.deleteMany({ grade: id }),
+                courseModel.deleteMany({ grade: id }),
             ]);
         } else {
             // If no user found, just delete the grade
@@ -156,6 +160,8 @@ export const deleteGradeController = async (req, res) => {
                 resultModel.deleteMany({ grade: id }),
                 paymentModel.deleteMany({ grade: id }),
                 contentModel.deleteMany({ grade: id }),
+                noticeModel.deleteMany({ grade: id }),
+                courseModel.deleteMany({ grade: id }),
             ]);
         }
 
