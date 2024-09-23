@@ -1,6 +1,7 @@
 import userModel from '../models/userModel.js'
 import paymentModel from '../models/paymentModel.js';
 import resultModel from '../models/resultModel.js';
+import orderModel from '../models/orderModel.js';
 import { comparePassword, hashPassword } from '../helpers/authHelper.js'
 import JWT from 'jsonwebtoken'
 import { v2 as cloudinary } from 'cloudinary';
@@ -403,6 +404,7 @@ export const deleteUserController = async (req, res) => {
             userModel.findByIdAndDelete(id),
             paymentModel.deleteMany({ user: id }),
             resultModel.deleteMany({ user: id }),
+            orderModel.deleteMany({ buyer: id }),
             publicId ? cloudinary.uploader.destroy(publicId) : null,
         ]);
         res.status(200).send({
