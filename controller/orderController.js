@@ -1,5 +1,5 @@
 import orderModel from "../models/orderModel.js";
-import moment from 'moment';
+import moment from 'moment-timezone';
 import dotenv from 'dotenv';
 import { CourierClient } from '@trycourier/courier';
 
@@ -32,6 +32,7 @@ export const createOrderController = async (req, res) => {
         // Format date
         const formattedOrderDate = moment(order.createdAt).tz('Asia/Dhaka').format('llll');
         const formattedClassDate = moment(order.course.dateRange).tz('Asia/Dhaka').format('ll');
+        console.log(formattedOrderDate);
 
         // Send confirmation email via Courier
         const { requestId } = await courier.send({
