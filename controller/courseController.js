@@ -226,7 +226,7 @@ export const deleteCourseController = async (req, res) => {
     try {
         const course = await courseModel.findByIdAndDelete(req.params.id);
 
-        // If old image exists, delete it
+        // If image exists, delete it
         if (course.courseImg) {
             const publicId = course.courseImg.split('/').pop().split('.')[0];
             await cloudinary.uploader.destroy(`5points-student-portal/courses/${publicId}`);

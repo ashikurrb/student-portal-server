@@ -124,46 +124,58 @@ export const deleteGradeController = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Find the grade and check if it exists
-        const grade = await gradeModel.findById(id);
-        if (!grade) {
-            return res.status(404).send({
-                success: false,
-                message: "Grade not found",
-            });
-        }
-
-        // Find the user associated with the grade
+        // Find the user, notice, and course 
         const user = await userModel.findOne({ grade: id });
-        if (user) {
-            // Extract public_id from the Cloudinary URL
-            const avatarUrl = user.avatar;
-            const publicId = avatarUrl
-                ? '5points-student-portal/avatar/' + avatarUrl.split('/').pop().split('.')[0]
-                : null;
+        const notice = await noticeModel.findOne({ grade: id });
+        const course = await courseModel.findOne({ grade: id });
 
-            // Delete related records and Cloudinary image if exists
-            await Promise.all([
-                gradeModel.findByIdAndDelete(id),
-                userModel.deleteMany({ grade: id }),
-                publicId ? cloudinary.uploader.destroy(publicId) : null,
-                resultModel.deleteMany({ grade: id }),
-                paymentModel.deleteMany({ grade: id }),
-                contentModel.deleteMany({ grade: id }),
-                noticeModel.deleteMany({ grade: id }),
-                courseModel.deleteMany({ grade: id }),
-            ]);
-        } else {
-            // If no user found, just delete the grade
-            await Promise.all([
-                gradeModel.findByIdAndDelete(id),
-                resultModel.deleteMany({ grade: id }),
-                paymentModel.deleteMany({ grade: id }),
-                contentModel.deleteMany({ grade: id }),
-                noticeModel.deleteMany({ grade: id }),
-                courseModel.deleteMany({ grade: id }),
-            ]);
+        // initialize promises array for deletion
+        const deletePromises = [];
+
+        // Delete avatar and Cloudinary images if user exists
+        if (user) {
+            // Delete user avatar from Cloudinary
+            const publicId = user.avatar
+                ? `5points-student-portal/avatar/${user.avatar.split('/').pop().split('.')[0]}`
+                : null;
+            if (publicId) {
+                deletePromises.push(cloudinary.uploader.destroy(publicId));
+            }
+            deletePromises.push(userModel.deleteMany({ grade: id }));
         }
+
+        // Delete notice image from Cloudinary if notice exists
+        if (notice) {
+            const noticeId = notice.noticeImg
+                ? `5points-student-portal/notices/${notice.noticeImg.split('/').pop().split('.')[0]}`
+                : null;
+            if (noticeId) {
+                deletePromises.push(cloudinary.uploader.destroy(noticeId));
+            }
+            deletePromises.push(noticeModel.deleteMany({ grade: id }));
+        }
+
+        // Delete course image from Cloudinary if course exists
+        if (course) {
+            const courseId = course.courseImg
+                ? `5points-student-portal/courses/${course.courseImg.split('/').pop().split('.')[0]}`
+                : null;
+            if (courseId) {
+                deletePromises.push(cloudinary.uploader.destroy(courseId));
+            }
+            deletePromises.push(courseModel.deleteMany({ grade: id }));
+        }
+
+        // Delete the grade and related data
+        deletePromises.push(
+            gradeModel.findByIdAndDelete(id),
+            resultModel.deleteMany({ grade: id }),
+            paymentModel.deleteMany({ grade: id }),
+            contentModel.deleteMany({ grade: id })
+        );
+
+        // Execute all deletion promises
+        await Promise.all(deletePromises);
 
         res.status(200).send({
             success: true,

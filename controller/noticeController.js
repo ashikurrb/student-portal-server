@@ -174,7 +174,8 @@ export const updateNoticeController = async (req, res) => {
 export const deleteNoticeController = async (req, res) => {
     try {
         const notice = await noticeModel.findByIdAndDelete(req.params.id);
-        // If old image exists, delete it
+        
+        // If image exists, delete it
         if (notice.noticeImg) {
             const publicId = notice.noticeImg.split('/').pop().split('.')[0];
             await cloudinary.uploader.destroy(`5points-student-portal/notices/${publicId}`);
