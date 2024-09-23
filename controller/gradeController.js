@@ -85,14 +85,14 @@ export const getAllGradesController = async (req, res) => {
             .sort({ createdAt: -1 })
         res.status(200).send({
             success: true,
-            message: "Grades List fetched successfully",
+            message: "Grade List fetched successfully",
             grade,
         })
     } catch (error) {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error fetching all grades",
+            message: "Error fetching grade list",
             error
         })
     }
@@ -168,7 +168,7 @@ export const deleteGradeController = async (req, res) => {
         res.status(500).send({
             success: false,
             error,
-            message: "Error while deleting grade",
+            message: "Error deleting grade",
         });
     }
 };

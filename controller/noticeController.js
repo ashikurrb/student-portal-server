@@ -93,8 +93,8 @@ export const getGradeNoticeController = async (req, res) => {
         // Find notices that match the user's grade or have no grade specified
         const notices = await noticeModel.find({
             $or: [
-                { grade: userGrade },   // Matches the user's grade
-                { grade: null }         // No grade specified
+                { grade: userGrade },  
+                { grade: null }       
             ]
         })
             .populate("grade")
