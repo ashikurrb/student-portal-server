@@ -30,8 +30,8 @@ export const createOrderController = async (req, res) => {
         await order.save();
 
         // Format date
-        const formattedOrderDate = moment(order.createdAt).format('llll');
-        const formattedClassDate = moment(order.course.dateRange).format('ll');
+        const formattedOrderDate = moment(order.createdAt).tz('Asia/Dhaka').format('llll');
+        const formattedClassDate = moment(order.course.dateRange).tz('Asia/Dhaka').format('ll');
 
         // Send confirmation email via Courier
         const { requestId } = await courier.send({
@@ -129,7 +129,7 @@ export const orderStatusController = async (req, res) => {
             .populate("course", "title price dateRange");
             
         // Format date
-        const formattedUpdatedDate = moment(order.updatedAt).format('llll');
+        const formattedUpdatedDate = moment(order.updatedAt).tz('Asia/Dhaka').format('llll');
 
         // Send confirmation email via Courier
         const { requestId } = await courier.send({
