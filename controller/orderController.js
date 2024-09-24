@@ -1,7 +1,12 @@
 import orderModel from "../models/orderModel.js";
-import moment from 'moment-timezone';
-import dotenv from 'dotenv';
 import { CourierClient } from '@trycourier/courier';
+import dotenv from 'dotenv';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js'; 
+import timezone from 'dayjs/plugin/timezone.js';
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 dotenv.config();
 
@@ -30,8 +35,8 @@ export const createOrderController = async (req, res) => {
         await order.save();
 
         // Format date
-        const formattedOrderDate = moment(order.createdAt).tz('Asia/Dhaka').format('llll');
-        const formattedClassDate = moment(order.course.dateRange).tz('Asia/Dhaka').format('ll');
+        const formattedOrderDate = dayjs(order.createdAt).tz('Asia/Dhaka').format('MMMM DD, YYYY hh:mm:ss A');
+        const formattedClassDate = dayjs(order.course.dateRange).tz('Asia/Dhaka').format('MMM DD, YYYY');
         console.log(formattedOrderDate);
 
         // Send confirmation email via Courier
@@ -130,7 +135,7 @@ export const orderStatusController = async (req, res) => {
             .populate("course", "title price dateRange");
             
         // Format date
-        const formattedUpdatedDate = moment(order.updatedAt).tz('Asia/Dhaka').format('llll');
+        const formattedUpdatedDate = dayjs(order.updatedAt).tz('Asia/Dhaka').format('MMMM DD, YYYY hh:mm:ss A');
 
         // Send confirmation email via Courier
         const { requestId } = await courier.send({
