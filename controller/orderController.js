@@ -136,6 +136,7 @@ export const orderStatusController = async (req, res) => {
             
         // Format date
         const formattedUpdatedDate = dayjs(order.updatedAt).tz('Asia/Dhaka').format('MMMM DD, YYYY hh:mm:ss A');
+        const classStartDate = dayjs(order.course.dateRange).tz('Asia/Dhaka').format('MMM DD, YYYY');
 
         // Send confirmation email via Courier
         const { requestId } = await courier.send({
@@ -148,6 +149,7 @@ export const orderStatusController = async (req, res) => {
                     name: order.buyer.name,
                     courseName: order.course.title,
                     orderStatus: order.status,
+                    dateRange: classStartDate,
                     updatedDate: formattedUpdatedDate,
                 },
                 routing: {
