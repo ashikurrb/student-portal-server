@@ -27,7 +27,17 @@ export const createPaymentController = async (req, res) => {
         if (!paymentDate) {
             return res.status(400).send({ message: "Payment Date is required" });
         }
+        
+        //check for duplicate
+        const existingTrxId = await paymentModel.findOne({ trxId })
+        if (existingTrxId) {
+            return res.status(409).send({
+                success: false,
+                message: "Transaction ID already exists"
+            })
+        }
 
+        //save
         const payment = new paymentModel({ ...req.fields });
         await payment.save();
         res.status(201).send({
