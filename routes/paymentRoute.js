@@ -1,7 +1,7 @@
 import express from 'express';
 import formidable from "express-formidable";
 import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js';
-import { createPaymentController, deletePaymentController, getAllPaymentController, getPaymentController, updatePaymentController } from '../controller/paymentController.js';
+import { createPaymentController, deletePaymentController, getAllPaymentController, getPaymentController, trxIdGenController, updatePaymentController } from '../controller/paymentController.js';
 
 const router = express.Router();
 
@@ -9,6 +9,9 @@ const router = express.Router();
 
 //create payment
 router.post('/create-payment', requireSignIn, isAdmin, formidable(), createPaymentController)
+
+//create trxId
+router.post('/trx-gen', requireSignIn, isAdmin, formidable(), trxIdGenController)
 
 //get all payment
 router.get('/user-payment', requireSignIn, getPaymentController)

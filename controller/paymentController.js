@@ -1,4 +1,5 @@
 import paymentModel from "../models/paymentModel.js";
+import gradeModel from "../models/gradeModel.js";
 
 
 //create payment
@@ -27,7 +28,7 @@ export const createPaymentController = async (req, res) => {
         if (!paymentDate) {
             return res.status(400).send({ message: "Payment Date is required" });
         }
-        
+
         //check for duplicate
         const existingTrxId = await paymentModel.findOne({ trxId })
         if (existingTrxId) {
@@ -52,6 +53,64 @@ export const createPaymentController = async (req, res) => {
             success: false,
             message: "Error creating payment status",
             error
+        });
+    }
+};
+
+export const trxIdGenController = async (req, res) => {
+    try {
+        if (!req.fields.grade) {
+            return res.status(400).send({ message: "Grade is required" });
+        }
+        const grade = await gradeModel.findById(req.fields.grade).select("name");
+        let gradeSign = '';
+        if (grade.name) {
+            const parts = grade.name.split(' ');
+            if (parts.length > 1) {
+                gradeSign = parts[0][0].toUpperCase() + parts[1].slice(0, 2).toUpperCase();
+            } else {
+                gradeSign = parts[0].slice(0, 3).toUpperCase();
+            }
+        }
+
+        // Date generation
+        const currentDate = new Date();
+        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        const month = months[currentDate.getMonth()];
+        const year = currentDate.getFullYear().toString().slice(-2);
+
+        //prefix generation
+        const newPrefix = `${month}${year}${gradeSign}`;
+
+        //find duplicate trx id
+        const availableTrxIds = await paymentModel.find({}).select("trxId");
+        const matchingTrxIds = availableTrxIds.map(payment => payment.trxId).filter(trxId => trxId.startsWith(newPrefix));
+
+        //generate serial number based on available trx ids
+        let newSerialNumber;
+        if (matchingTrxIds.length > 0) {
+            const lastTwoDigits = matchingTrxIds
+                .map(id => parseInt(id.slice(-2)))
+                .filter(num => !isNaN(num));
+            const maxSerialNumber = lastTwoDigits.length > 0 ? Math.max(...lastTwoDigits) : 0;
+            newSerialNumber = (maxSerialNumber + 1) % 100;
+        } else {
+            newSerialNumber = 1;
+        }
+
+        const formattedSerialNumber = newSerialNumber.toString().padStart(2, '0');
+        const newTrxId = `${newPrefix}${formattedSerialNumber}`;
+        res.status(200).send({
+            success: true,
+            message: "Transaction ID generated successfully",
+            trxId: newTrxId
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            success: false,
+            message: "Error generating transaction ID",
+            error: error.message
         });
     }
 };
