@@ -79,12 +79,15 @@ export const trxIdGenController = async (req, res) => {
         const month = months[currentDate.getMonth()];
         const year = currentDate.getFullYear().toString().slice(-2);
 
-        //prefix generation
-        const newPrefix = `${month}${year}${gradeSign}`;
+        //date prefix
+        const datePrefix = `${month}${year}`;
+
+        //final prefix generation
+        const finalPrefix = `${datePrefix}${gradeSign}`;
 
         //find duplicate trx id
         const availableTrxIds = await paymentModel.find({}).select("trxId");
-        const matchingTrxIds = availableTrxIds.map(payment => payment.trxId).filter(trxId => trxId.startsWith(newPrefix));
+        const matchingTrxIds = availableTrxIds.map(payment => payment.trxId).filter(trxId => trxId.startsWith(datePrefix));
 
         //generate serial number based on available trx ids
         let newSerialNumber;
@@ -99,7 +102,7 @@ export const trxIdGenController = async (req, res) => {
         }
 
         const formattedSerialNumber = newSerialNumber.toString().padStart(2, '0');
-        const newTrxId = `${newPrefix}${formattedSerialNumber}`;
+        const newTrxId = `${finalPrefix}${formattedSerialNumber}`;
         res.status(200).send({
             success: true,
             message: "Transaction ID generated successfully",
