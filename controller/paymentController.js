@@ -1,6 +1,11 @@
 import paymentModel from "../models/paymentModel.js";
 import gradeModel from "../models/gradeModel.js";
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
 
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 //create payment
 export const createPaymentController = async (req, res) => {
@@ -73,11 +78,10 @@ export const trxIdGenController = async (req, res) => {
             }
         }
 
-        // Date generation
-        const currentDate = new Date();
-        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-        const month = months[currentDate.getMonth()];
-        const year = currentDate.getFullYear().toString().slice(-2);
+        // Date Generation
+        const currentDate = dayjs().tz('Asia/Dhaka');
+        const month = currentDate.format('MMM').toUpperCase(); 
+        const year = currentDate.format('YY'); 
 
         //date prefix
         const datePrefix = `${month}${year}`;
