@@ -205,12 +205,8 @@ export const getRelatedCourseController = async (req, res) => {
         const course = await courseModel.find({
             grade: gid,
             _id: { $ne: cid },
-        }).populate("grade")
-        res.status(200).send({
-            success: true,
-            message: "Same grade course fetched successfully",
-            course
-        });
+        }).limit(4).populate("grade");
+        res.status(200).send(course);
     } catch (error) {
         console.log(error);
         res.status(400).send({
