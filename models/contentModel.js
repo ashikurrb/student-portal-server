@@ -14,7 +14,7 @@ const contentSchema = new mongoose.Schema({
     type: {
         type: String,
         default: "PDF",
-        enum: ["PDF", "Doc", "Video", "Audio", "PPT"],
+        enum: ["PDF", "Doc", "Slide", "Spreadsheet", "Video", "Audio", "Online Class"],
         require: true,
     },
     contentLink: {
