@@ -73,7 +73,7 @@ export const registerController = async (req, res) => {
             return res.json({ message: "Mobile number must be 11 digits" })
         }
         if (password && password.length < 6) {
-            return res.json({ message: "Password must be at least 6 characters long" })
+            return res.json({ message: "Password must be 6 characters or more" })
         }
         //encrypting password
         const hashedPassword = password ? await hashPassword(password) : undefined;
@@ -195,7 +195,7 @@ export const forgotPasswordController = async (req, res) => {
             return res.status(400).send({ success: false, message: "New password is required" });
         }
         if (newPassword.length < 6) {
-            return res.status(400).send({ success: false, message: "Password must be at least 6 characters long" });
+            return res.status(400).send({ success: false, message: "Password must be 6 characters or more" });
         }
 
         // Check user existence
@@ -327,7 +327,7 @@ export const updateUserProfileController = async (req, res) => {
         }
 
         if (newPassword && newPassword.length < 6) {
-            return res.json({ error: "Password must be at least 6 characters long" });
+            return res.json({ error: "Password must be 6 characters or more" });
         }
 
         if (newPassword || oldPassword) {
