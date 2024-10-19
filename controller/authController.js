@@ -2,11 +2,13 @@ import userModel from '../models/userModel.js'
 import paymentModel from '../models/paymentModel.js';
 import resultModel from '../models/resultModel.js';
 import orderModel from '../models/orderModel.js';
+import otpModel from '../models/otpModel.js';
 import { comparePassword, hashPassword } from '../helpers/authHelper.js'
 import JWT from 'jsonwebtoken'
 import { v2 as cloudinary } from 'cloudinary';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
+import crypto from 'crypto';
 import { CourierClient } from '@trycourier/courier';
 
 dotenv.config();
@@ -21,9 +23,87 @@ cloudinary.config({
 //courier mail token
 const courier = new CourierClient({ authorizationToken: process.env.COURIER_AUTH_TOKEN });
 
+//send otp
+export const getOtpController = async (req, res) => {
+    try {
+        const { name, email } = req.fields;
+        //validation
+        if (!name) {
+            return res.send({ message: "Name is required" })
+        }
+        if (!email) {
+            return res.send({ message: "Email is required" })
+        }
+
+        // Find user by email or phone
+        const existingUser = await userModel.findOne({
+            $or: [
+                { email: email }
+            ]
+        });
+
+        // Check existing user
+        if (existingUser) {
+            if (existingUser.email === email) {
+                return res.status(200).send({
+                    success: false,
+                    message: "Email is already registered"
+                });
+            }
+        }
+
+        // Generate OTP and save it temporarily
+        const otp = crypto.randomInt(100000, 999999).toString(); // 6-digit OTP
+        await new otpModel({ email, otp, expiresAt: Date.now() + 5 * 60 * 1000 }).save(); // OTP expires in 5 minutes
+
+        // Send OTP via Courier email
+        const { requestId } = await courier.send({
+            message: {
+                to: {
+                    email: email
+                },
+                template: process.env.COURIER_OTP_TEMPLATE_KEY,
+                data: {
+                    name: name,
+                    otp: otp,
+                },
+                routing: {
+                    method: "single",
+                    channels: ["email"],
+                },
+            },
+        });
+
+        res.status(200).send({
+            success: true,
+            message: "OTP sent to your email. Please verify to complete registration.",
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Error during registration",
+            error
+        })
+    }
+}
+
+//verify otp and register
 export const registerController = async (req, res) => {
     try {
-        const { name, email, password, phone, answer, grade } = req.fields;
+        const { email, otp, password, name, phone, answer, grade } = req.fields;
+
+        // Find OTP in database
+        const otpRecord = await otpModel.findOne({ email, otp });
+        if (!otpRecord) {
+            return res.status(400).send({ success: false, message: "Invalid OTP" });
+        }
+        // Check if OTP is expired
+        if (otpRecord.expiresAt < Date.now()) {
+            return res.status(400).send({ success: false, message: "OTP expired" });
+        }
+
         //validation
         if (!name) {
             return res.send({ message: "Name is required" })
@@ -67,7 +147,6 @@ export const registerController = async (req, res) => {
             }
         }
 
-        //register User
         //condition 
         if (phone && phone.length < 11) {
             return res.json({ message: "Mobile number must be 11 digits" })
@@ -78,42 +157,33 @@ export const registerController = async (req, res) => {
         //encrypting password
         const hashedPassword = password ? await hashPassword(password) : undefined;
 
-        //save
-        const user = await new userModel({ name, email, phone, answer, password: hashedPassword, grade }).save()
+        // Save user in the database
+        const user = await new userModel({ name, email, phone, answer, password: hashedPassword, grade }).save();
 
-        // Send registration confirmation email via Courier
-        const { requestId } = await courier.send({
+        // Send confirmation email
+        await courier.send({
             message: {
-                to: {
-                    data: { name },
-                    email
-                },
+                to: { email },
                 template: process.env.COURIER_WELCOME_TEMPLATE_KEY,
-                data: {
-                    name: "name",
-                },
-                routing: {
-                    method: "single",
-                    channels: ["email"],
-                },
+                data: { name },
+                routing: { method: "single", channels: ["email"] },
             },
         });
+
+        // Delete OTP record after successful registration
+        await otpModel.deleteOne({ email, otp });
 
         res.status(201).send({
             success: true,
             message: "Registration successful!",
-            user
-        })
+            user,
+        });
 
     } catch (error) {
         console.log(error);
-        res.status(500).send({
-            success: false,
-            message: "Error during registration",
-            error
-        })
+        res.status(500).send({ success: false, message: "Error during OTP verification", error });
     }
-}
+};
 
 //Login : POST
 export const loginController = async (req, res) => {

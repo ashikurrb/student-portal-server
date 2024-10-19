@@ -1,6 +1,6 @@
 import express from "express"
 import formidable from "express-formidable";
-import { deleteUserController, forgotPasswordController, getAllUsersController, getProfileDataController, loginController, registerController, updateUserGradeController, updateUserProfileController } from "../controller/authController.js"
+import { deleteUserController, forgotPasswordController, getAllUsersController, getProfileDataController, loginController, registerController, getOtpController, updateUserGradeController, updateUserProfileController } from "../controller/authController.js"
 import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js'
 
 //router object
@@ -9,7 +9,10 @@ const router = express.Router();
 //routing
 
 //REGISTER || Method: POST
-router.post('/register', formidable(), registerController)
+router.post('/verify-otp', formidable(), getOtpController)
+
+//otp-verify
+router.post('/register', formidable(), registerController);
 
 //Login || Method: POST
 router.post('/login', formidable(), loginController)
