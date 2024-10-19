@@ -53,8 +53,8 @@ export const getOtpController = async (req, res) => {
         }
 
         // Generate OTP and save it temporarily
-        const otp = crypto.randomInt(100000, 999999).toString(); // 6-digit OTP
-        await new otpModel({ email, otp, expiresAt: Date.now() + 5 * 60 * 1000 }).save(); // OTP expires in 5 minutes
+        const otp = crypto.randomInt(100000, 999999).toString();
+        await new otpModel({ email, otp, expiresAt: Date.now() + 5 * 60 * 1000 }).save();
 
         // Send OTP via Courier email
         const { requestId } = await courier.send({
@@ -76,7 +76,7 @@ export const getOtpController = async (req, res) => {
 
         res.status(200).send({
             success: true,
-            message: "OTP sent to your email. Please verify to complete registration.",
+            message: "OTP sent to your email",
         });
 
     } catch (error) {
@@ -94,11 +94,18 @@ export const registerController = async (req, res) => {
     try {
         const { email, otp, password, name, phone, answer, grade } = req.fields;
 
-        // Find OTP in database
+        // Find if email exists in the database
+        const otpEmail = await otpModel.findOne({ email });
+        if (!otpEmail) {
+            return res.status(400).send({ success: false, message: "Email not found" });
+        }
+
+        // Check if OTP matches for the provided email
         const otpRecord = await otpModel.findOne({ email, otp });
         if (!otpRecord) {
             return res.status(400).send({ success: false, message: "Invalid OTP" });
         }
+
         // Check if OTP is expired
         if (otpRecord.expiresAt < Date.now()) {
             return res.status(400).send({ success: false, message: "OTP expired" });
