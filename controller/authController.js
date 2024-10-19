@@ -52,6 +52,19 @@ export const getOtpController = async (req, res) => {
             }
         }
 
+        // Check if there's an unexpired OTP for this email
+        const existingOtp = await otpModel.findOne({
+            email,
+            expiresAt: { $gt: Date.now() }, 
+        });
+
+        if (existingOtp) {
+            return res.status(200).send({
+                success: true,
+                message: "OTP already sent. Use it or try again later.",
+            });
+        }
+
         // Generate OTP and save it temporarily
         const otp = crypto.randomInt(100000, 999999).toString();
         await new otpModel({ email, otp, expiresAt: Date.now() + 5 * 60 * 1000 }).save();
