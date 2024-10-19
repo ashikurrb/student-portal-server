@@ -1,6 +1,6 @@
 import express from "express"
 import formidable from "express-formidable";
-import { deleteUserController, forgotPasswordController, getAllUsersController, getProfileDataController, loginController, registerController, getOtpController, updateUserGradeController, updateUserProfileController, getFailedUserController } from "../controller/authController.js"
+import { deleteUserController, forgotPasswordController, getAllUsersController, getProfileDataController, loginController, registerController, getOtpController, updateUserGradeController, updateUserProfileController, getFailedUserController, deleteFailedUserController } from "../controller/authController.js"
 import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js'
 
 //router object
@@ -16,6 +16,9 @@ router.post('/register', formidable(), registerController);
 
 //get all failed user
 router.get('/failed-user', requireSignIn, isAdmin, getFailedUserController)
+
+//delete failed user
+router.delete('/delete-failed/:id', requireSignIn, isAdmin, deleteFailedUserController)
 
 //Login || Method: POST
 router.post('/login', formidable(), loginController)

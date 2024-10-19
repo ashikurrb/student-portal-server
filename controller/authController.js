@@ -36,11 +36,7 @@ export const getOtpController = async (req, res) => {
         }
 
         // Find user by email or phone
-        const existingUser = await userModel.findOne({
-            $or: [
-                { email: email }
-            ]
-        });
+        const existingUser = await userModel.findOne({ email: email });
 
         // Check existing user
         if (existingUser) {
@@ -352,14 +348,32 @@ export const getProfileDataController = async (req, res) => {
 //get failed user controller
 export const getFailedUserController = async (req, res) => {
     try {
-        const expiredOtp = new Date(Date.now() - 5 * 60 * 1000);
-        const failedUser = await otpModel.find({ expiresAt: { $lt: expiredOtp } }).sort({ createdAt: -1 });
+        //show only expired otp users
+        // const expiredOtp = new Date(Date.now() - 5 * 60 * 1000);
+        // const failedUser = await otpModel.find({ expiresAt: { $lt: expiredOtp } }).sort({ createdAt: -1 });
+        const failedUser = await otpModel.find({}).sort({ createdAt: -1 });
         res.json(failedUser);
     } catch (error) {
         console.log(error);
         res.status(500).send({
             success: false,
             message: "Error fetching failed users",
+            error,
+        });
+    }
+}
+
+//delete failed users
+export const deleteFailedUserController = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await otpModel.findByIdAndDelete(id);
+        res.status(200).send({ message: "User deleted successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Error deleting failed user",
             error,
         });
     }
