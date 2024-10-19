@@ -13,6 +13,6 @@ const otpSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-});
+}, { timestamps: true })
 
 export default mongoose.model('Otp', otpSchema);

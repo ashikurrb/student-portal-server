@@ -55,13 +55,13 @@ export const getOtpController = async (req, res) => {
         // Check if there's an unexpired OTP for this email
         const existingOtp = await otpModel.findOne({
             email,
-            expiresAt: { $gt: Date.now() }, 
+            expiresAt: { $gt: Date.now() },
         });
 
         if (existingOtp) {
             return res.status(200).send({
                 success: true,
-                message: "OTP already sent. Use it or try again later.",
+                message: "OTP already sent. Use it or try again later.p",
             });
         }
 
@@ -348,6 +348,22 @@ export const getProfileDataController = async (req, res) => {
         });
     }
 };
+
+//get failed user controller
+export const getFailedUserController = async (req, res) => {
+    try {
+        const expiredOtp = new Date(Date.now() - 5 * 60 * 1000);
+        const failedUser = await otpModel.find({ expiresAt: { $lt: expiredOtp } }).sort({ createdAt: -1 });
+        res.json(failedUser);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Error fetching failed users",
+            error,
+        });
+    }
+}
 
 //Get all users list controller
 export const getAllUsersController = async (req, res) => {
