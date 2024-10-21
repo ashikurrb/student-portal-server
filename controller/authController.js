@@ -57,7 +57,7 @@ export const getOtpController = async (req, res) => {
         if (existingOtp) {
             return res.status(200).send({
                 success: true,
-                message: "OTP already sent. Use it or try again later.p",
+                message: "OTP already sent. Use it or try again later.",
             });
         }
 
