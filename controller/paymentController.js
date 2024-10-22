@@ -1,5 +1,6 @@
 import paymentModel from "../models/paymentModel.js";
 import gradeModel from "../models/gradeModel.js";
+import userModel from "../models/userModel.js";
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 import timezone from 'dayjs/plugin/timezone.js';
@@ -80,8 +81,8 @@ export const trxIdGenController = async (req, res) => {
 
         // Date Generation
         const currentDate = dayjs().tz('Asia/Dhaka');
-        const month = currentDate.format('MMM').toUpperCase(); 
-        const year = currentDate.format('YY'); 
+        const month = currentDate.format('MMM').toUpperCase();
+        const year = currentDate.format('YY');
 
         //date prefix
         const datePrefix = `${month}${year}`;
@@ -130,6 +131,15 @@ export const getPaymentController = async (req, res) => {
             .populate("user")
             .populate("grade")
             .sort({ createdAt: -1 });
+
+        //user status validation
+        const user = await userModel.findById(req.user);
+        if (user.status === "Disabled") {
+            return res.status(404).json({
+                success: false,
+                error: "Temporarily Blocked. Contact Admin",
+            })
+        }
         res.json(payment);
     } catch (error) {
         console.log(error);

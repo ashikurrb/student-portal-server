@@ -1,8 +1,9 @@
 import orderModel from "../models/orderModel.js";
+import userModel from "../models/userModel.js";
 import { CourierClient } from '@trycourier/courier';
 import dotenv from 'dotenv';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc.js'; 
+import utc from 'dayjs/plugin/utc.js';
 import timezone from 'dayjs/plugin/timezone.js';
 
 dayjs.extend(utc)
@@ -26,6 +27,15 @@ export const createOrderController = async (req, res) => {
         }
         if (!trxId) {
             return res.status(400).send({ message: "Transaction ID is required" });
+        }
+        
+        //user status validation
+        const user = await userModel.findById(req.user);
+        if (user.status === "Disabled") {
+            return res.status(404).json({
+                success: false,
+                error: "Temporarily Blocked. Contact Admin",
+            })
         }
 
         const order = new orderModel({ ...req.fields, buyer: req.user._id });
@@ -88,6 +98,15 @@ export const getOrdersController = async (req, res) => {
             .populate("buyer")
             .populate("course")
             .sort({ createdAt: -1 });
+
+        //user status validation
+        const user = await userModel.findById(req.user);
+        if (user.status === "Disabled") {
+            return res.status(404).json({
+                success: false,
+                error: "Temporarily Blocked. Contact Admin",
+            })
+        }
         res.json(orders);
     } catch (error) {
         console.log(error);
@@ -133,7 +152,7 @@ export const orderStatusController = async (req, res) => {
             .findByIdAndUpdate(id, { status }, { new: true })
             .populate("buyer", "email name")
             .populate("course", "title price dateRange");
-            
+
         // Format date
         const formattedUpdatedDate = dayjs(order.updatedAt).tz('Asia/Dhaka').format('MMMM DD, YYYY hh:mm:ss A');
         const classStartDate = dayjs(order.course.dateRange).tz('Asia/Dhaka').format('MMM DD, YYYY');

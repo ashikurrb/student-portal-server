@@ -1,5 +1,5 @@
-import slugify from 'slugify';
 import resultModel from '../models/resultModel.js'
+import userModel from '../models/userModel.js'
 
 //create result
 export const createResultController = async (req, res) => {
@@ -50,6 +50,15 @@ export const getResultController = async (req, res) => {
             .find({ user: req.user._id })
             .populate("grade")
             .sort({ createdAt: -1 });
+
+        //user status validation
+        const user = await userModel.findById(req.user);
+        if (user.status === "Disabled") {
+            return res.status(404).json({
+                success: false,
+                error: "Temporarily Blocked. Contact Admin",
+            })
+        }
         res.json(result);
     } catch (error) {
         console.log(error);

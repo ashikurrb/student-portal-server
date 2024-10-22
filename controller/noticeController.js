@@ -84,8 +84,14 @@ export const getAllNoticeController = async (req, res) => {
 //get notice
 export const getGradeNoticeController = async (req, res) => {
     try {
-        // Fetch the logged-in user's data using the user ID
-        const user = await userModel.findById(req.user);
+         //user status validation
+         const user = await userModel.findById(req.user);
+         if (user.status === "Disabled") {
+             return res.status(404).json({
+                 success: false,
+                 error: "Temporarily Blocked. Contact Admin",
+             })
+         }
 
         // Get the grade of the logged-in user
         const userGrade = user.grade;

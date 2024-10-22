@@ -230,7 +230,7 @@ export const loginController = async (req, res) => {
                 error: 'No user found',
             })
         }
-        //
+        //user status validation
         if (user.status === "Disabled") {
             return res.status(404).json({
                 success: false,
@@ -259,6 +259,7 @@ export const loginController = async (req, res) => {
                 phone: user.phone,
                 grade: user.grade,
                 role: user.role,
+                status: user.status,
             }, token,
         })
 
@@ -297,6 +298,14 @@ export const forgotPasswordController = async (req, res) => {
             return res.status(404).send({
                 success: false,
                 message: "Invalid email or answer"
+            });
+        }
+
+        // Check if user status is disabled
+        if (user.status === "Disabled") {
+            return res.status(403).send({
+                success: false,
+                message: "Temporarily Blocked. Contact Admin"
             });
         }
 
@@ -430,7 +439,7 @@ export const updateUserStatusController = async (req, res) => {
         const { id } = req.params;
         const { status } = req.body;
         const userStatus = await userModel.findByIdAndUpdate(id, { status }, { new: true });
-       
+
         // Conditional message based on status
         const message = status === 'Enabled'
             ? "User Approved"
@@ -460,8 +469,13 @@ export const updateUserProfileController = async (req, res) => {
         // Find the user by ID
         const userId = req.user._id;
         const user = await userModel.findById(userId);
-        if (!user) {
-            return res.status(404).send({ message: 'User not found' });
+
+        //user status validation
+        if (user.status === "Disabled") {
+            return res.status(404).json({
+                success: false,
+                error: "Temporarily Blocked. Contact Admin",
+            })
         }
 
         // Check if the phone number already exists for another user
