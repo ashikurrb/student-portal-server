@@ -230,6 +230,13 @@ export const loginController = async (req, res) => {
                 error: 'No user found',
             })
         }
+        //
+        if (user.status === "Disabled") {
+            return res.status(404).json({
+                success: false,
+                error: "Temporarily Blocked. Contact Admin",
+            })
+        }
 
         //compare password encryption
         const match = await comparePassword(password, user.password)
@@ -402,13 +409,37 @@ export const getAllUsersController = async (req, res) => {
 export const updateUserGradeController = async (req, res) => {
     try {
         const { grade } = req.fields;
-        if (!grade) {
-            return res.status(400).send({ message: "New Grade is Required" });
-        }
         const updatedUserGrade = await userModel.findByIdAndUpdate(req.params.id, { ...req.fields }, { new: true })
         res.status(201).send({
             success: true,
             message: "Users grade updated successfully",
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Error updating users grade",
+            error
+        })
+    }
+}
+
+//update user's status controller
+export const updateUserStatusController = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        const userStatus = await userModel.findByIdAndUpdate(id, { status }, { new: true });
+       
+        // Conditional message based on status
+        const message = status === 'Enabled'
+            ? "User Approved"
+            : "User Blocked";
+
+        res.status(201).send({
+            success: true,
+            message,
+            userStatus
         });
     } catch (error) {
         console.log(error);
