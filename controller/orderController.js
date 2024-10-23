@@ -28,7 +28,7 @@ export const createOrderController = async (req, res) => {
         if (!trxId) {
             return res.status(400).send({ message: "Transaction ID is required" });
         }
-        
+
         //user status validation
         const user = await userModel.findById(req.user);
         if (user.status === "Disabled") {
@@ -178,10 +178,19 @@ export const orderStatusController = async (req, res) => {
             },
         });
 
+        //Custom Message
+        let message;
+        if (status === 'Approved') {
+            message = "Order Approved";
+        } else if (status === 'Canceled') {
+            message = "Order Canceled";
+        } else if (status === 'Pending') {
+            message = "Order Still Pending";
+        } 
 
         res.status(201).send({
             success: true,
-            message: "Status updated successfully",
+            message,
             order,
         });
     } catch (error) {
