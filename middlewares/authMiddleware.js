@@ -34,24 +34,24 @@ export const isAdmin = async (req, res, next) => {
     }
 }
 
-//Moderator Access
-// export const isModerator = async (req, res, next) => {
-//     try {
-//         const user = await userModel.findById(req.user._id)
-//         if (user.role === 2) {
-//             next();
-//         } else {
-//             return res.status(401).send({
-//                 success: false,
-//                 message: "Unauthorized Access for Moderator"
-//             })
-//         }
-//     } catch (error) {
-//         console.log(error);
-//         res.status(401).send({
-//             success: false,
-//             message: "Error in Moderator",
-//             error
-//         })
-//     }
-// }
+//Moderator Access (every admin is also a moderator, but not any moderator is admin)
+export const isModerator = async (req, res, next) => {
+    try {
+        const user = await userModel.findById(req.user._id);
+        if (user.role !== 2 && user.role !== 1) {
+            return res.status(401).send({
+                success: false,
+                message: "Unauthorized Access"
+            });
+        } else {
+            next();
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(401).send({
+            success: false,
+            message: "Error in Moderator Access",
+            error
+        });
+    }
+};
