@@ -128,7 +128,7 @@ export const getPaymentController = async (req, res) => {
     try {
         const payment = await paymentModel
             .find({ user: req.user._id })
-            .populate("user")
+            .populate({ path: "user", select: "-password" })
             .populate("grade")
             .sort({ createdAt: -1 });
 

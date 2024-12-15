@@ -95,7 +95,7 @@ export const getOrdersController = async (req, res) => {
     try {
         const orders = await orderModel
             .find({ buyer: req.user._id })
-            .populate("buyer")
+            .populate({ path: "buyer", select: "-password" })
             .populate("course")
             .sort({ createdAt: -1 });
 
