@@ -533,7 +533,9 @@ export const updateUserProfileController = async (req, res) => {
             answer: answer || user.answer,
             avatar: user.avatar,
             password: hashedPassword
-        }, { new: true }).populate("grade");
+        }, { new: true })
+            .populate("grade")
+            .select("-password");
 
         res.status(200).send({
             success: true,
