@@ -1,6 +1,6 @@
 import express from "express"
 import formidable from "express-formidable";
-import { deleteUserController, forgotPasswordController, getAllUsersController, getProfileDataController, loginController, registerController, getOtpController, updateUserGradeController, updateUserProfileController, getFailedUserController, deleteFailedUserController, updateUserStatusController } from "../controller/authController.js"
+import { deleteUserController, forgotPasswordController, getAllUsersController, getProfileDataController, loginController, registerController, getOtpController, updateUserGradeController, updateUserProfileController, getFailedUserController, deleteFailedUserController, updateUserStatusController, getDashboardDataController } from "../controller/authController.js"
 import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js'
 
 //router object
@@ -43,6 +43,9 @@ router.put('/update-profile', requireSignIn, formidable(), updateUserProfileCont
 
 //delete user by admin
 router.delete('/delete-user/:id', requireSignIn, isAdmin, deleteUserController)
+
+//all user list
+router.get("/dashboard-data", requireSignIn, isAdmin, getDashboardDataController)
 
 //protected user route
 router.get('/user-auth', requireSignIn, (req, res) => {

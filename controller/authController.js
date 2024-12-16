@@ -1,4 +1,6 @@
 import userModel from '../models/userModel.js'
+import gradeModel from '../models/gradeModel.js';
+import courseModel from '../models/courseModel.js';
 import paymentModel from '../models/paymentModel.js';
 import resultModel from '../models/resultModel.js';
 import orderModel from '../models/orderModel.js';
@@ -586,3 +588,123 @@ export const deleteUserController = async (req, res) => {
         })
     }
 }
+
+//get dashboard data controller
+export const getDashboardDataController = async (req, res) => {
+    try {
+        const totalUser = await userModel.countDocuments();
+        const totalGrade = await gradeModel.countDocuments();
+        const totalUserbyGrade = await userModel.aggregate([
+            {
+                $lookup: {
+                    from: "grades", // Name of the grades collection
+                    localField: "grade",
+                    foreignField: "_id",
+                    as: "gradeDetails"
+                }
+            },
+            {
+                $unwind: "$gradeDetails" // Unwind the gradeDetails array to access its fields
+            },
+            {
+                $group: {
+                    _id: "$gradeDetails.name", // Use the 'name' field from gradeDetails as the grouping key
+                    total: { $sum: 1 }
+                }
+            }
+        ]);        
+
+        // total payment received
+        const paymentTotal = await paymentModel.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalAmount: { $sum: "$amount" }
+                }
+            }
+        ]);
+        const totalPaymentReceived = paymentTotal.length > 0 ? paymentTotal[0].totalAmount : 0;
+
+        //total payment of current month
+        const currentDate = new Date(); // Get current date
+        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1); // Start of the month
+        const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0); // End of the month
+
+        const currentMonthPayment = await paymentModel.aggregate([
+            {
+                $match: {
+                    paymentDate: {
+                        $gte: firstDayOfMonth, // Payments from the start of the current month
+                        $lte: lastDayOfMonth  // Payments up to the end of the current month
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalPayment: { $sum: "$amount" }
+                }
+            }
+        ]);
+
+        const totalCurrentMonthPayment = currentMonthPayment.length > 0 ? currentMonthPayment[0].totalPayment : 0;
+        const currentMonth = new Date().toLocaleString('default', { month: 'long' });;
+
+        //total course
+        const totalCourse = await courseModel.countDocuments();
+
+        //total order
+        const totalOrder = await orderModel.countDocuments();
+        const totalApprovedOrder = await orderModel.countDocuments({ status: "Approved" });
+        const totalPendingOrder = await orderModel.countDocuments({ status: "Pending" });
+        const totalCanceledOrder = await orderModel.countDocuments({ status: "Canceled" });
+        const totalOrderSoldAmount = await orderModel.aggregate([
+            {
+                $match: {
+                    status: "Approved" // Only include orders with status 'approved'
+                }
+            },
+            {
+                $lookup: {
+                    from: "courses", // The name of the collection storing course details
+                    localField: "course", // Field in `orderModel` referencing the course ID
+                    foreignField: "_id", // Field in `courseModel` containing the ObjectId
+                    as: "courses" // Output array field with matching course documents
+                }
+            },
+            {
+                $unwind: "$courses" // Flatten the array to access course details
+            },
+            {
+                $group: {
+                    _id: null, // No grouping key needed, sum all prices
+                    totalCoursePrice: { $sum: "$courses.price" } // Sum the `price` field from course details
+                }
+            }
+        ]);        
+
+        const totalOrderSell = totalOrderSoldAmount.length > 0 ? totalOrderSoldAmount[0].totalCoursePrice : 0;
+        
+        res.json({
+            totalUser,
+            totalGrade,
+            totalCourse,
+            totalPaymentReceived,
+            totalOrder,
+            totalApprovedOrder,
+            totalPendingOrder,
+            totalCanceledOrder,
+            totalUserbyGrade,
+            currentMonth,
+            totalCurrentMonthPayment,
+            totalOrderSell,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            success: false,
+            error,
+            message: "Error fetching dashboard data"
+        });
+    }
+};
