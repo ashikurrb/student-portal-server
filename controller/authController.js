@@ -12,6 +12,12 @@ import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
 import { CourierClient } from '@trycourier/courier';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 dotenv.config();
 
@@ -624,11 +630,11 @@ export const getDashboardDataController = async (req, res) => {
             }
         ]);
         const totalPaymentReceived = paymentTotal.length > 0 ? paymentTotal[0].totalAmount : 0;
-
+      
         //total payment of current month
-        const currentDate = new Date(); // Get current date
-        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1); // Start of the month
-        const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0); // End of the month
+        const currentDate = dayjs().tz('Asia/Dhaka');
+        const firstDayOfMonth = currentDate.startOf('month'); // Start of the month
+        const lastDayOfMonth = currentDate.endOf('month'); // End of the month
 
         const currentMonthPayment = await paymentModel.aggregate([
             {
