@@ -630,11 +630,11 @@ export const getDashboardDataController = async (req, res) => {
             }
         ]);
         const totalPaymentReceived = paymentTotal.length > 0 ? paymentTotal[0].totalAmount : 0;
-      
+
         //total payment of current month
         const currentDate = dayjs().tz('Asia/Dhaka');
-        const firstDayOfMonth = currentDate.startOf('month'); // Start of the month
-        const lastDayOfMonth = currentDate.endOf('month'); // End of the month
+        const firstDayOfMonth = currentDate.startOf('month').toDate(); // Start of the month
+        const lastDayOfMonth = currentDate.endOf('month').toDate(); // End of the month
 
         const currentMonthPayment = await paymentModel.aggregate([
             {
@@ -654,7 +654,7 @@ export const getDashboardDataController = async (req, res) => {
         ]);
 
         const totalCurrentMonthPayment = currentMonthPayment.length > 0 ? currentMonthPayment[0].totalPayment : 0;
-        const currentMonth = new Date().toLocaleString('default', { month: 'long' });;
+        const currentMonth = dayjs().tz('Asia/Dhaka').format('MMMM');
 
         //total course
         const totalCourse = await courseModel.countDocuments();
