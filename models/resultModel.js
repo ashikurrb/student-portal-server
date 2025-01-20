@@ -3,18 +3,22 @@ import mongoose from "mongoose";
 const resultSchema = new mongoose.Schema({
     type: {
         type: String,
-        require: true,
+        required: true,
         trim: true,
     },
-    subject: {
-        type: String,
-        require: true,
-        trim: true,
-    },
-    marks: {
-        type: String,
-        require: true,
-    },
+    subjects: [
+        {
+            subject: {
+                type: String,
+                required: true,
+                trim: true,
+            },
+            marks: {
+                type: String,
+                required: true,
+            },
+        },
+    ],
     examDate: {
         type: Date,
         require: true,

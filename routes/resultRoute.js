@@ -8,7 +8,7 @@ const router = express.Router();
 //routes
 
 //create result
-router.post('/create-result', requireSignIn, isAdmin, formidable(), createResultController)
+router.post('/create-result', requireSignIn, isAdmin, createResultController)
 
 //get single result
 router.get('/user-result', requireSignIn, getResultController)
@@ -17,7 +17,7 @@ router.get('/user-result', requireSignIn, getResultController)
 router.get('/all-result', requireSignIn, isAdmin, getAllResultController)
 
 //update result
-router.put('/update-result/:id', requireSignIn, isAdmin, formidable(), updateResultController)
+router.put('/update-result/:id', requireSignIn, isAdmin, updateResultController)
 
 //delete result
 router.delete('/delete-result/:id', requireSignIn, isAdmin, deleteResultController)
