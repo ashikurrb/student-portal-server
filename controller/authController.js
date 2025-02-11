@@ -567,6 +567,12 @@ export const deleteUserController = async (req, res) => {
         const { id } = req.params;
 
         const user = await userModel.findById(id);
+        if (user.role === 1) {
+            return res.status(403).send({
+                success: false,
+                message: "Authorization Error: Admin cannot be deleted",
+            });
+        }
 
         // Extract public_id from the Cloudinary URL
         const avatarUrl = user.avatar;
@@ -618,7 +624,7 @@ export const getDashboardDataController = async (req, res) => {
                     total: { $sum: 1 }
                 }
             }
-        ]);        
+        ]);
 
         // total payment received
         const paymentTotal = await paymentModel.aggregate([
@@ -687,10 +693,10 @@ export const getDashboardDataController = async (req, res) => {
                     totalCoursePrice: { $sum: "$courses.price" } // Sum the `price` field from course details
                 }
             }
-        ]);        
+        ]);
 
         const totalOrderSell = totalOrderSoldAmount.length > 0 ? totalOrderSoldAmount[0].totalCoursePrice : 0;
-        
+
         res.json({
             totalUser,
             totalGrade,

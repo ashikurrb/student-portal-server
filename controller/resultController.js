@@ -41,7 +41,7 @@ export const createResultController = async (req, res) => {
             grade,
         });
         await results.save();
-
+        
         res.status(201).send({
             success: true,
             message: "Result created successfully",

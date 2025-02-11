@@ -117,11 +117,14 @@ export const getCourseController = async (req, res) => {
 //update course
 export const updateCourseController = async (req, res) => {
     try {
-        const { title, price, dateRange, description, status } = req.fields;
+        const { grade, title, price, dateRange, description, status } = req.fields;
         const file = req.files.photo;
         const courseId = req.params.id;
 
         //validation
+        if (!grade) {
+            return res.status(400).send({ message: "Grade is required" });
+        }
         if (!title) {
             return res.status(400).send({ message: "Course name is required" });
         }
@@ -139,7 +142,7 @@ export const updateCourseController = async (req, res) => {
         const course = await courseModel.findById(courseId);
 
         //set update data
-        const courseData = { title, slug: slugify(title), price, dateRange, description, status };
+        const courseData = {grade, title, slug: slugify(title), price, dateRange, description, status };
 
         if (file) {
             // If old image exists, delete it
