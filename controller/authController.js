@@ -609,18 +609,18 @@ export const getDashboardDataController = async (req, res) => {
         const totalUserbyGrade = await userModel.aggregate([
             {
                 $lookup: {
-                    from: "grades", // Name of the grades collection
+                    from: "grades", 
                     localField: "grade",
                     foreignField: "_id",
                     as: "gradeDetails"
                 }
             },
             {
-                $unwind: "$gradeDetails" // Unwind the gradeDetails array to access its fields
+                $unwind: "$gradeDetails" 
             },
             {
                 $group: {
-                    _id: "$gradeDetails.name", // Use the 'name' field from gradeDetails as the grouping key
+                    _id: "$gradeDetails.name", 
                     total: { $sum: 1 }
                 }
             }
@@ -645,7 +645,7 @@ export const getDashboardDataController = async (req, res) => {
         const currentMonthPayment = await paymentModel.aggregate([
             {
                 $match: {
-                    paymentDate: {
+                    createdAt: {
                         $gte: firstDayOfMonth, // Payments from the start of the current month
                         $lte: lastDayOfMonth  // Payments up to the end of the current month
                     }
