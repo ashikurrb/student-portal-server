@@ -133,9 +133,10 @@ export const updateNoticeController = async (req, res) => {
 
         // Fetch existing notice
         const notice = await noticeModel.findById(noticeId);
-
+        
         // Initialize noticeData object
-        const noticeData = { title, noticeInfo, grade };
+        const updatedGrade = grade && grade !== "null" ? grade : null;
+        const noticeData = { title, noticeInfo, grade:updatedGrade };
 
         //Conditional photo upload
         if (file) {
