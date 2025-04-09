@@ -283,6 +283,9 @@ export const loginController = async (req, res) => {
 export const getForgotPasswordOtpController = async (req, res) => {
     try {
         const { email } = req.fields;
+        if (!email) {
+            return res.send({ message: "Email is Required" })
+        }
 
         // Find user by email or phone
         const existingUser = await userModel.findOne({ email: email });
