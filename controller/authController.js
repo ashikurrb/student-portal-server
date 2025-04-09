@@ -71,7 +71,7 @@ export const getOtpController = async (req, res) => {
 
         // Generate OTP and save it temporarily
         const otp = crypto.randomInt(100000, 999999).toString();
-        await new otpModel({ name, email, otp, expiresAt: Date.now() + 5 * 60 * 1000 }).save();
+        await new otpModel({ name, email, otp, type: "registration", expiresAt: Date.now() + 5 * 60 * 1000 }).save();
 
         // Send OTP via Courier email
         const { requestId } = await courier.send({
@@ -218,7 +218,7 @@ export const loginController = async (req, res) => {
         if (!email && !phone || !password) {
             return res.status(404).send({
                 success: false,
-                message: "Invalid credential",
+                message: "Invalid Credential",
                 error
             })
         }
@@ -235,7 +235,7 @@ export const loginController = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                error: 'No user found',
+                error: 'Invalid Credential',
             })
         }
         //user status validation
@@ -251,7 +251,7 @@ export const loginController = async (req, res) => {
         if (!match) {
             return res.status(200).send({
                 success: false,
-                message: "Invalid password",
+                message: "Invalid Credential",
             })
         }
 
@@ -313,7 +313,7 @@ export const getForgotPasswordOtpController = async (req, res) => {
 
         // Generate OTP and save it temporarily
         const otp = crypto.randomInt(100000, 999999).toString();
-        await new otpModel({ email,name, otp, expiresAt: Date.now() + 5 * 60 * 1000 }).save();
+        await new otpModel({ email, name, otp, type: "password_reset", expiresAt: Date.now() + 5 * 60 * 1000 }).save();
 
         // Send OTP via Courier email
         const { requestId } = await courier.send({
@@ -459,7 +459,7 @@ export const getFailedUserController = async (req, res) => {
         //show only expired otp users
         // const expiredOtp = new Date(Date.now() - 5 * 60 * 1000);
         // const failedUser = await otpModel.find({ expiresAt: { $lt: expiredOtp } }).sort({ createdAt: -1 });
-        const failedUser = await otpModel.find({}).sort({ createdAt: -1 });
+        const failedUser = await otpModel.find({ type: "registration" }).sort({ createdAt: -1 });
         res.json(failedUser);
     } catch (error) {
         console.log(error);
