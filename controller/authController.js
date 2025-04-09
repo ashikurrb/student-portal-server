@@ -313,7 +313,7 @@ export const getForgotPasswordOtpController = async (req, res) => {
 
         // Generate OTP and save it temporarily
         const otp = crypto.randomInt(100000, 999999).toString();
-        await new otpModel({ email, otp, expiresAt: Date.now() + 5 * 60 * 1000 }).save();
+        await new otpModel({ email,name, otp, expiresAt: Date.now() + 5 * 60 * 1000 }).save();
 
         // Send OTP via Courier email
         const { requestId } = await courier.send({
