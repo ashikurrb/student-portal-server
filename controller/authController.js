@@ -280,17 +280,99 @@ export const loginController = async (req, res) => {
     }
 }
 
+export const getForgotPasswordOtpController = async (req, res) => {
+    try {
+        const { email } = req.fields;
+
+        // Find user by email or phone
+        const existingUser = await userModel.findOne({ email: email });
+
+        // Check if user exists
+        if (!existingUser) {
+            return res.status(200).send({
+                success: false,
+                message: "User Not Found. Please Register"
+            });
+        }
+
+        //get user name
+        const name = existingUser.name;
+
+        // Check if there's an unexpired OTP for this email
+        const existingOtp = await otpModel.findOne({
+            email,
+            expiresAt: { $gt: Date.now() },
+        });
+
+        if (existingOtp) {
+            return res.status(200).send({
+                success: true,
+                message: "OTP already sent. Use it or try again later.",
+            });
+        }
+
+        // Generate OTP and save it temporarily
+        const otp = crypto.randomInt(100000, 999999).toString();
+        await new otpModel({ email, otp, expiresAt: Date.now() + 5 * 60 * 1000 }).save();
+
+        // Send OTP via Courier email
+        const { requestId } = await courier.send({
+            message: {
+                to: {
+                    email: email
+                },
+                template: process.env.COURIER_FORGOT_PASSWORD_OTP_TEMPLATE_KEY,
+                data: {
+                    name: name,
+                    otp: otp,
+                },
+                routing: {
+                    method: "single",
+                    channels: ["email"],
+                },
+            },
+        });
+
+        res.status(200).send({
+            success: true,
+            message: "OTP sent to your email",
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Error getting OTP",
+            error
+        })
+    }
+}
+
 //forgot password controller 
 export const forgotPasswordController = async (req, res) => {
     try {
-        const { email, answer, newPassword } = req.fields;
+        const { email, otp, newPassword } = req.fields;
+
+        // Find if email exists in the database
+        const otpEmail = await otpModel.findOne({ email });
+        if (!otpEmail) {
+            return res.status(400).send({ success: false, message: "Email not found" });
+        }
+
+        // Check if OTP matches for the provided email
+        const otpRecord = await otpModel.findOne({ email, otp });
+        if (!otpRecord) {
+            return res.status(400).send({ success: false, message: "Invalid OTP" });
+        }
+
+        // Check if OTP is expired
+        if (otpRecord.expiresAt < Date.now()) {
+            return res.status(400).send({ success: false, message: "OTP expired" });
+        }
 
         // Input validation
         if (!email) {
             return res.status(400).send({ success: false, message: "Email is required" });
-        }
-        if (!answer) {
-            return res.status(400).send({ success: false, message: "Answer is required" });
         }
         if (!newPassword) {
             return res.status(400).send({ success: false, message: "New password is required" });
@@ -300,11 +382,11 @@ export const forgotPasswordController = async (req, res) => {
         }
 
         // Check user existence
-        const user = await userModel.findOne({ email, answer });
+        const user = await userModel.findOne({ email });
         if (!user) {
             return res.status(404).send({
                 success: false,
-                message: "Invalid email or answer"
+                message: "User Not Found. Please Register"
             });
         }
 
@@ -326,6 +408,9 @@ export const forgotPasswordController = async (req, res) => {
             success: true,
             message: "Password reset successfully!"
         });
+
+        // Delete OTP record after successful registration
+        await otpModel.deleteOne({ email, otp });
 
     } catch (error) {
         console.error(error);
@@ -609,18 +694,18 @@ export const getDashboardDataController = async (req, res) => {
         const totalUserbyGrade = await userModel.aggregate([
             {
                 $lookup: {
-                    from: "grades", 
+                    from: "grades",
                     localField: "grade",
                     foreignField: "_id",
                     as: "gradeDetails"
                 }
             },
             {
-                $unwind: "$gradeDetails" 
+                $unwind: "$gradeDetails"
             },
             {
                 $group: {
-                    _id: "$gradeDetails.name", 
+                    _id: "$gradeDetails.name",
                     total: { $sum: 1 }
                 }
             }

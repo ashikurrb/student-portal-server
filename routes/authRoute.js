@@ -1,6 +1,6 @@
 import express from "express"
 import formidable from "express-formidable";
-import { deleteUserController, forgotPasswordController, getAllUsersController, getProfileDataController, loginController, registerController, getOtpController, updateUserGradeController, updateUserProfileController, getFailedUserController, deleteFailedUserController, updateUserStatusController, getDashboardDataController } from "../controller/authController.js"
+import { deleteUserController, forgotPasswordController, getAllUsersController, getProfileDataController, loginController, registerController, getOtpController, updateUserGradeController, updateUserProfileController, getFailedUserController, deleteFailedUserController, updateUserStatusController, getDashboardDataController,getForgotPasswordOtpController } from "../controller/authController.js"
 import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js'
 
 //router object
@@ -11,7 +11,7 @@ const router = express.Router();
 //OTP Verification
 router.post('/verify-otp', formidable(), getOtpController)
 
-//REGISTER || Method: POST
+//REGISTER 
 router.post('/register', formidable(), registerController);
 
 //get all failed user
@@ -20,10 +20,13 @@ router.get('/failed-user', requireSignIn, isAdmin, getFailedUserController)
 //delete failed user
 router.delete('/delete-failed/:id', requireSignIn, isAdmin, deleteFailedUserController)
 
-//Login || Method: POST
+//Login
 router.post('/login', formidable(), loginController)
 
-//Forgot Password || Method: POST
+//Verify Forgot Password OTP 
+router.post('/verify-forgot-password', formidable(), getForgotPasswordOtpController)
+
+//Forgot Password 
 router.post('/forgot-password', formidable(), forgotPasswordController)
 
 //all user list
@@ -32,10 +35,10 @@ router.get("/all-users", requireSignIn, isAdmin, getAllUsersController)
 //get logged-in user profile data
 router.get("/profile", requireSignIn, getProfileDataController)
 
-//Update User Grade by Admin || Method: POST
+//Update User Grade by Admin
 router.put('/user-grade/:id', requireSignIn, isAdmin, formidable(), updateUserGradeController)
 
-//Update User Status by Admin || Method: POST
+//Update User Status by Admin
 router.put('/user-status/:id', requireSignIn, isAdmin, updateUserStatusController)
 
 //update user profile
