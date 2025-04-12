@@ -267,6 +267,7 @@ export const loginController = async (req, res) => {
                 phone: user.phone,
                 grade: user.grade,
                 role: user.role,
+                answer: user.answer,
             }, token,
         })
 
