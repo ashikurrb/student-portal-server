@@ -138,7 +138,7 @@ export const updateCourseController = async (req, res) => {
             return res.status(400).send({ message: "Status is required" });
         }
 
-        // Fetch existing notice
+        // Fetch existing course
         const course = await courseModel.findById(courseId);
 
         //set update data
