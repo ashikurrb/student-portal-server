@@ -49,7 +49,7 @@ export const createCourseController = async (req, res) => {
         const courseData = { grade, title, slug: slugify(title), price, dateRange, description, status };
         try {
             const result = await cloudinary.uploader.upload(file.path, {
-                folder: '5points-student-portal/courses',
+                folder: 'student-portal/courses',
                 use_filename: true,
                 unique_filename: false
             });
@@ -148,11 +148,11 @@ export const updateCourseController = async (req, res) => {
             // If old image exists, delete it
             if (course.courseImg) {
                 const publicId = course.courseImg.split('/').pop().split('.')[0];
-                await cloudinary.uploader.destroy(`5points-student-portal/courses/${publicId}`);
+                await cloudinary.uploader.destroy(`student-portal/courses/${publicId}`);
             }
             try {
                 const result = await cloudinary.uploader.upload(file.path, {
-                    folder: '5points-student-portal/courses'
+                    folder: 'student-portal/courses'
                 });
                 //save photo url to database
                 courseData.courseImg = result.secure_url;
@@ -228,7 +228,7 @@ export const deleteCourseController = async (req, res) => {
         // If image exists, delete it
         if (course.courseImg) {
             const publicId = course.courseImg.split('/').pop().split('.')[0];
-            await cloudinary.uploader.destroy(`5points-student-portal/courses/${publicId}`);
+            await cloudinary.uploader.destroy(`student-portal/courses/${publicId}`);
         }
         res.status(200).send({
             success: true,

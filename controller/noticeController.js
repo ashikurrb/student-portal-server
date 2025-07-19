@@ -33,7 +33,7 @@ export const createNoticeController = async (req, res) => {
         if (file) {
             try {
                 const result = await cloudinary.uploader.upload(file.path, {
-                    folder: '5points-student-portal/notices',
+                    folder: 'student-portal/notices',
                     use_filename: true,
                     unique_filename: false
                 });
@@ -143,12 +143,12 @@ export const updateNoticeController = async (req, res) => {
             // If old image exists, delete it
             if (notice.noticeImg) {
                 const publicId = notice.noticeImg.split('/').pop().split('.')[0];
-                await cloudinary.uploader.destroy(`5points-student-portal/notices/${publicId}`);
+                await cloudinary.uploader.destroy(`student-portal/notices/${publicId}`);
             }
 
             try {
                 const result = await cloudinary.uploader.upload(file.path, {
-                    folder: '5points-student-portal/notices'
+                    folder: 'student-portal/notices'
                 });
                 //save photo url to database
                 noticeData.noticeImg = result.secure_url;
@@ -185,7 +185,7 @@ export const deleteNoticeController = async (req, res) => {
         // If image exists, delete it
         if (notice.noticeImg) {
             const publicId = notice.noticeImg.split('/').pop().split('.')[0];
-            await cloudinary.uploader.destroy(`5points-student-portal/notices/${publicId}`);
+            await cloudinary.uploader.destroy(`student-portal/notices/${publicId}`);
         }
         res.status(200).send({
             success: true,

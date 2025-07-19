@@ -137,7 +137,7 @@ export const deleteGradeController = async (req, res) => {
         if (user) {
             // Delete user avatar from Cloudinary
             const publicId = user.avatar
-                ? `5points-student-portal/avatar/${user.avatar.split('/').pop().split('.')[0]}`
+                ? `student-portal/avatar/${user.avatar.split('/').pop().split('.')[0]}`
                 : null;
             if (publicId) {
                 deletePromises.push(cloudinary.uploader.destroy(publicId));
@@ -152,7 +152,7 @@ export const deleteGradeController = async (req, res) => {
         // Delete notice image from Cloudinary if notice exists
         if (notice) {
             const noticeId = notice.noticeImg
-                ? `5points-student-portal/notices/${notice.noticeImg.split('/').pop().split('.')[0]}`
+                ? `student-portal/notices/${notice.noticeImg.split('/').pop().split('.')[0]}`
                 : null;
             if (noticeId) {
                 deletePromises.push(cloudinary.uploader.destroy(noticeId));
@@ -163,7 +163,7 @@ export const deleteGradeController = async (req, res) => {
         // Delete course image from Cloudinary if course exists
         if (course) {
             const courseId = course.courseImg
-                ? `5points-student-portal/courses/${course.courseImg.split('/').pop().split('.')[0]}`
+                ? `student-portal/courses/${course.courseImg.split('/').pop().split('.')[0]}`
                 : null;
             if (courseId) {
                 deletePromises.push(cloudinary.uploader.destroy(courseId));
